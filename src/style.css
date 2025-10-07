@@ -1,9 +1,60 @@
 html,
 body {
-  padding: 0;
+  padding: 30px;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #202020;
+  color: #BABABA;
+  
 }
 
 * {
   font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.5rem;
+}
+
+.border {
+    border: 3px solid #373737;
+    border-radius: 10px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+#errorText {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+
+#inputBox {
+  margin: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+input {
+  all: unset;
+  width: 20rem;
+  padding: 10px;
+}
+
+button {
+  width: 5rem;
+  background-color: #626ED9;
+  cursor: pointer;
+}
+
+ul {
+  all: unset;
+}
+
+#task {
+  min-width: 20rem;
+  padding: 10px;
+  margin: 20px;
 }
