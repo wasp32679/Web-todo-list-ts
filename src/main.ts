@@ -22,12 +22,13 @@ const addTodo = () => {
     errorTxt.innerText = 'Can not add an empty task.'
   } else {
     errorTxt.innerText = ''
+    const taskText = todoInput.value.trim()
     const newTask = document.createElement('li')
     newTask.setAttribute('class', 'task border')
     tasksList.appendChild(newTask)
-    newTask.innerText = todoInput.value
+    newTask.innerText = taskText
     todoInput.value = ''
-    arrOfTask.push({ task: newTask.innerText })
+    arrOfTask.push({ task: taskText })
     const JSONTaskList = JSON.stringify(arrOfTask)
     localStorage.setItem('taskList', JSONTaskList)
   }
@@ -47,15 +48,11 @@ todoInput.addEventListener('keypress', (e) => {
 })
 
 window.addEventListener('load', () => {
-  if (storedTaskListArr !== null) {
-    for (let i = 0; i < storedTaskListArr.length; i++) {
-      const newTask = document.createElement('li')
-      newTask.setAttribute('class', 'task border')
-      tasksList.appendChild(newTask)
-      newTask.innerText = storedTaskListArr[i].task
-      arrOfTask.push({ task: newTask.innerText })
-      const JSONTaskList = JSON.stringify(arrOfTask)
-      localStorage.setItem('taskList', JSONTaskList)
-    }
-  }
+  storedTaskListArr.forEach((task) => {
+    arrOfTask.push(task)
+    const newTask = document.createElement('li')
+    newTask.setAttribute('class', 'task border')
+    newTask.innerText = task.task
+    tasksList.appendChild(newTask)
+  })
 })
