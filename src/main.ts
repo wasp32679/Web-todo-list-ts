@@ -15,7 +15,7 @@ if (
 }
 const addTodo = () => {
   if (todoInput.value.trim() === '') {
-    errorTxt.innerText = 'Error input is empty'
+    errorTxt.innerText = 'Can not add an empty task.'
   } else {
     errorTxt.innerText = ''
     const newTask = document.createElement('li')
