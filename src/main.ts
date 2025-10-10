@@ -71,6 +71,10 @@ const addTodo = () => {
     })
   }
 }
+const storedTaskListStr = localStorage.getItem('taskList')
+const storedTaskListArr: Task[] = storedTaskListStr
+  ? JSON.parse(storedTaskListStr)
+  : []
 
 // const saveCheckbox = () => {
 //   const checkboxes = document.querySelectorAll('input[type="checkbox"]')
