@@ -9,10 +9,6 @@ interface Task {
   done: boolean
 }
 const arrOfTask: Task[] = []
-// interface Check {
-//   check: string
-// }
-// const arrOfChecks: Check[] = []
 
 if (
   addBtn === null ||
@@ -75,18 +71,6 @@ const storedTaskListStr = localStorage.getItem('taskList')
 const storedTaskListArr: Task[] = storedTaskListStr
   ? JSON.parse(storedTaskListStr)
   : []
-
-// const saveCheckbox = () => {
-//   const checkboxes = document.querySelectorAll('input[type="checkbox"]')
-// }
-
-const storedTaskListStr = localStorage.getItem('taskList')
-const storedTaskListArr: Task[] = storedTaskListStr
-  ? JSON.parse(storedTaskListStr)
-  : []
-
-// const storedChecks = localStorage.getItem('checkList')
-// const storedChecksArr: Check[] = storedChecks ? JSON.parse(storedChecks) : []
 
 addBtn.addEventListener('click', () => {
   addTodo()
