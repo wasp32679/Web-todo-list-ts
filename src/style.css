@@ -39,7 +39,6 @@ main {
   display: flex;
   flex-direction: column;
   padding-top: 10px;
-  position: relative;
 }
 
 label {
@@ -76,7 +75,6 @@ ul {
 
 li {
   display: flex;
-  text-align: center;
   align-items: center;
 }
 
@@ -87,22 +85,21 @@ li {
   font-size: 1rem;
 }
 
-#tasktxt {
+.tasktxt {
   flex: 1;
   word-break: break-all;
   font-size: 1rem;
   text-align: left;
 }
 
-#actionBox {
-  min-width: 24rem;
+.actionBox {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
 }
 
-label[for="checkbox"] {
+.doneLabel {
   padding: 0;
   margin: 0;
   font-size: 1rem;

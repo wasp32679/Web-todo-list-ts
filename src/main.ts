@@ -18,53 +18,64 @@ if (
 ) {
   throw new Error('Missing variables for app to start')
 }
+
+const createElements = (taskText: string, isDone = false) => {
+  const newTask = document.createElement('li')
+  newTask.setAttribute('class', 'task border')
+  tasksList.appendChild(newTask)
+
+  const taskContent = document.createElement('span')
+  taskContent.className = 'tasktxt'
+  newTask.appendChild(taskContent)
+  taskContent.innerText = taskText
+  if (isDone) {
+    taskContent.classList.add('done')
+  }
+
+  const checkbox = document.createElement('input')
+  const uniqueId = `checkbox-${Date.now()}`
+  checkbox.setAttribute('type', 'checkbox')
+  checkbox.id = uniqueId
+  checkbox.checked = isDone
+
+  const actionBox = document.createElement('div')
+  actionBox.className = 'actionBox'
+
+  const checkLabel = document.createElement('label')
+  checkLabel.setAttribute('for', uniqueId)
+  checkLabel.className = 'doneLabel'
+  checkLabel.innerText = 'Done'
+
+  newTask.appendChild(actionBox)
+  actionBox.appendChild(checkLabel)
+  actionBox.appendChild(checkbox)
+
+  arrOfTask.push({
+    task: taskText,
+    done: checkbox.checked,
+  })
+  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+
+  checkbox.addEventListener('change', () => {
+    taskContent.classList.toggle('done', checkbox.checked)
+
+    const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
+    if (taskIndex !== -1) {
+      arrOfTask[taskIndex].done = checkbox.checked.valueOf()
+    }
+
+    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+  })
+}
+
 const addTodo = () => {
   if (todoInput.value.trim() === '') {
     errorTxt.innerText = 'Can not add an empty task.'
   } else {
     errorTxt.innerText = ''
     const taskText = todoInput.value.trim()
-    const newTask = document.createElement('li')
-    newTask.setAttribute('class', 'task border')
-    tasksList.appendChild(newTask)
-
-    const taskContent = document.createElement('span')
-    taskContent.setAttribute('id', 'tasktxt')
-    newTask.appendChild(taskContent)
-    taskContent.innerText = taskText
-
+    createElements(taskText, false)
     todoInput.value = ''
-
-    const checkbox = document.createElement('input')
-    checkbox.setAttribute('type', 'checkbox')
-
-    const actionBox = document.createElement('div')
-    actionBox.setAttribute('id', 'actionBox')
-
-    const checkLabel = document.createElement('label')
-    checkLabel.setAttribute('for', 'checkbox')
-    checkLabel.innerText = 'Done'
-
-    newTask.appendChild(actionBox)
-    actionBox.appendChild(checkLabel)
-    actionBox.appendChild(checkbox)
-
-    arrOfTask.push({
-      task: taskText,
-      done: checkbox.checked.valueOf(),
-    })
-    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-
-    checkbox.addEventListener('change', () => {
-      taskContent.classList.toggle('done', checkbox.checked)
-
-      const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
-      if (taskIndex !== -1) {
-        arrOfTask[taskIndex].done = checkbox.checked.valueOf()
-      }
-
-      localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-    })
   }
 }
 const storedTaskListStr = localStorage.getItem('taskList')
@@ -83,44 +94,6 @@ todoInput.addEventListener('keypress', (e) => {
 
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
-    arrOfTask.push(task)
-    const newTask = document.createElement('li')
-    newTask.setAttribute('class', 'task border')
-    tasksList.appendChild(newTask)
-
-    const taskContent = document.createElement('span')
-    taskContent.setAttribute('id', 'tasktxt')
-    newTask.appendChild(taskContent)
-    taskContent.innerText = task.task
-
-    const checkbox = document.createElement('input')
-    checkbox.setAttribute('type', 'checkbox')
-    checkbox.checked = task.done
-
-    const actionBox = document.createElement('div')
-    actionBox.setAttribute('id', 'actionBox')
-
-    const checkLabel = document.createElement('label')
-    checkLabel.setAttribute('for', 'checkbox')
-    checkLabel.innerText = 'Done'
-
-    newTask.appendChild(actionBox)
-    actionBox.appendChild(checkLabel)
-    actionBox.appendChild(checkbox)
-
-    if (task.done) {
-      taskContent.classList.toggle('done', checkbox.checked)
-    }
-
-    checkbox.addEventListener('change', () => {
-      taskContent.classList.toggle('done', checkbox.checked)
-
-      const taskIndex = arrOfTask.findIndex((t) => t.task === task.task)
-      if (taskIndex !== -1) {
-        arrOfTask[taskIndex].done = checkbox.checked.valueOf()
-      }
-
-      localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-    })
+    createElements(task.task, task.done)
   })
 })
