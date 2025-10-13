@@ -6,6 +6,7 @@ const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
 const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
 interface Task {
   task: string
+  done: boolean
 }
 const arrOfTask: Task[] = []
 
@@ -17,19 +18,64 @@ if (
 ) {
   throw new Error('Missing variables for app to start')
 }
+
+const createElements = (taskText: string, isDone = false) => {
+  const newTask = document.createElement('li')
+  newTask.setAttribute('class', 'task border')
+  tasksList.appendChild(newTask)
+
+  const taskContent = document.createElement('span')
+  taskContent.className = 'tasktxt'
+  newTask.appendChild(taskContent)
+  taskContent.innerText = taskText
+  if (isDone) {
+    taskContent.classList.add('done')
+  }
+
+  const checkbox = document.createElement('input')
+  const uniqueId = `checkbox-${Date.now()}`
+  checkbox.setAttribute('type', 'checkbox')
+  checkbox.id = uniqueId
+  checkbox.checked = isDone
+
+  const actionBox = document.createElement('div')
+  actionBox.className = 'actionBox'
+
+  const checkLabel = document.createElement('label')
+  checkLabel.setAttribute('for', uniqueId)
+  checkLabel.className = 'doneLabel'
+  checkLabel.innerText = 'Done'
+
+  newTask.appendChild(actionBox)
+  actionBox.appendChild(checkLabel)
+  actionBox.appendChild(checkbox)
+
+  arrOfTask.push({
+    task: taskText,
+    done: checkbox.checked,
+  })
+  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+
+  checkbox.addEventListener('change', () => {
+    taskContent.classList.toggle('done', checkbox.checked)
+
+    const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
+    if (taskIndex !== -1) {
+      arrOfTask[taskIndex].done = checkbox.checked.valueOf()
+    }
+
+    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+  })
+}
+
 const addTodo = () => {
   if (todoInput.value.trim() === '') {
     errorTxt.innerText = 'Can not add an empty task.'
   } else {
     errorTxt.innerText = ''
-    const newTask = document.createElement('li')
-    newTask.setAttribute('class', 'task border')
-    tasksList.appendChild(newTask)
-    newTask.innerText = todoInput.value
+    const taskText = todoInput.value.trim()
+    createElements(taskText, false)
     todoInput.value = ''
-    arrOfTask.push({ task: newTask.innerText })
-    const JSONTaskList = JSON.stringify(arrOfTask)
-    localStorage.setItem('taskList', JSONTaskList)
   }
 }
 const storedTaskListStr = localStorage.getItem('taskList')
@@ -47,15 +93,7 @@ todoInput.addEventListener('keypress', (e) => {
 })
 
 window.addEventListener('load', () => {
-  if (storedTaskListArr !== null) {
-    for (let i = 0; i < storedTaskListArr.length; i++) {
-      const newTask = document.createElement('li')
-      newTask.setAttribute('class', 'task border')
-      tasksList.appendChild(newTask)
-      newTask.innerText = storedTaskListArr[i].task
-      arrOfTask.push({ task: newTask.innerText })
-      const JSONTaskList = JSON.stringify(arrOfTask)
-      localStorage.setItem('taskList', JSONTaskList)
-    }
-  }
+  storedTaskListArr.forEach((task) => {
+    createElements(task.task, task.done)
+  })
 })
