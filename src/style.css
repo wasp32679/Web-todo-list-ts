@@ -30,6 +30,10 @@ h1 {
   margin: 0;
 }
 
+button {
+  cursor: pointer;
+}
+
 #errorText {
   padding-top: 15px;
   padding-bottom: 30px;
@@ -61,10 +65,9 @@ label {
   padding: 10px;
 }
 
-button {
+#add-todo-button {
   width: 5rem;
   background-color: var(--color-accent);
-  cursor: pointer;
 }
 
 ul {
@@ -114,4 +117,9 @@ input[type="checkbox"] {
 .done {
   text-decoration: line-through;
   color: #bababa63;
+}
+
+.remove {
+  background-color: #c64444;
+  font-size: 1rem;
 }

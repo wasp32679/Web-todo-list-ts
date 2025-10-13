@@ -5,6 +5,7 @@ const todoInput = document.querySelector<HTMLInputElement>('#todo-input')
 const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
 const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
 interface Task {
+  id: number
   task: string
   done: boolean
 }
@@ -19,7 +20,41 @@ if (
   throw new Error('Missing variables for app to start')
 }
 
-const createElements = (taskText: string, isDone = false) => {
+const addTodoToStorage = (taskText: string): number => {
+  const id = Date.now()
+
+  arrOfTask.push({
+    id: id,
+    task: taskText,
+    done: false,
+  })
+  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+  return arrOfTask.findIndex((t) => t.id === id)
+}
+
+const removeTodoFromStorage = (taskIndex: number) => {
+  if (taskIndex !== -1) {
+    arrOfTask.splice(taskIndex, 1)
+    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+  }
+}
+
+const saveTodoCheckboxChangesOnStorage = (
+  taskIndex: number,
+  checkbox: HTMLInputElement,
+) => {
+  if (taskIndex !== -1) {
+    arrOfTask[taskIndex].done = checkbox.checked
+  }
+
+  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+}
+
+const createElements = (
+  taskText: string,
+  taskIndex: number,
+  isDone = false,
+) => {
   const newTask = document.createElement('li')
   newTask.setAttribute('class', 'task border')
   tasksList.appendChild(newTask)
@@ -50,21 +85,19 @@ const createElements = (taskText: string, isDone = false) => {
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
-  arrOfTask.push({
-    task: taskText,
-    done: checkbox.checked,
+  const removeBtn = document.createElement('button')
+  removeBtn.innerText = 'Remove'
+  removeBtn.setAttribute('class', 'remove border')
+  actionBox.appendChild(removeBtn)
+
+  removeBtn.addEventListener('click', () => {
+    removeTodoFromStorage(taskIndex)
+    newTask.remove()
   })
-  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
 
   checkbox.addEventListener('change', () => {
     taskContent.classList.toggle('done', checkbox.checked)
-
-    const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
-    if (taskIndex !== -1) {
-      arrOfTask[taskIndex].done = checkbox.checked.valueOf()
-    }
-
-    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+    saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
   })
 }
 
@@ -74,7 +107,8 @@ const addTodo = () => {
   } else {
     errorTxt.innerText = ''
     const taskText = todoInput.value.trim()
-    createElements(taskText, false)
+    const index = addTodoToStorage(taskText)
+    createElements(taskText, index)
     todoInput.value = ''
   }
 }
@@ -94,6 +128,6 @@ todoInput.addEventListener('keypress', (e) => {
 
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
-    createElements(task.task, task.done)
+    createElements(task.task, task.id, task.done)
   })
 })
