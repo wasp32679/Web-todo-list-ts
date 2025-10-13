@@ -7,6 +7,7 @@ const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
 interface Task {
   task: string
   done: boolean
+  removed: boolean
 }
 const arrOfTask: Task[] = []
 
@@ -50,16 +51,34 @@ const createElements = (taskText: string, isDone = false) => {
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
+  const removeBtn = document.createElement('button')
+  removeBtn.innerText = 'Remove'
+  removeBtn.setAttribute('class', 'remove border')
+  actionBox.appendChild(removeBtn)
+
   arrOfTask.push({
     task: taskText,
     done: checkbox.checked,
+    removed: false,
   })
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+  const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
+
+  removeBtn.addEventListener('click', () => {
+    if (taskIndex !== -1) {
+      arrOfTask[taskIndex].removed = true
+      localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+    }
+    if (arrOfTask[taskIndex].removed === true) {
+      arrOfTask.splice(taskIndex, 1)
+      localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+    }
+    window.location.reload()
+  })
 
   checkbox.addEventListener('change', () => {
     taskContent.classList.toggle('done', checkbox.checked)
 
-    const taskIndex = arrOfTask.findIndex((t) => t.task === taskText)
     if (taskIndex !== -1) {
       arrOfTask[taskIndex].done = checkbox.checked.valueOf()
     }
