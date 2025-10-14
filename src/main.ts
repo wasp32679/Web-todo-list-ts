@@ -4,6 +4,7 @@ const addBtn = document.querySelector<HTMLButtonElement>('#add-todo-button')
 const todoInput = document.querySelector<HTMLInputElement>('#todo-input')
 const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
 const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
+const main = document.querySelector('main')
 interface Task {
   id: number
   task: string
@@ -15,7 +16,8 @@ if (
   addBtn === null ||
   todoInput === null ||
   errorTxt === null ||
-  tasksList === null
+  tasksList === null ||
+  main === null
 ) {
   throw new Error('Missing variables for app to start')
 }
@@ -32,8 +34,11 @@ const addTodoToStorage = (taskText: string): number => {
   return id
 }
 
+const findTaskIndexById = (taskId: number) =>
+  arrOfTask.findIndex((t) => t.id === taskId)
+
 const removeTodoFromStorage = (taskId: number) => {
-  const taskIndex = arrOfTask.findIndex((t) => t.id === taskId)
+  const taskIndex = findTaskIndexById(taskId)
 
   if (taskIndex !== -1) {
     arrOfTask.splice(taskIndex, 1)
@@ -45,7 +50,7 @@ const saveTodoCheckboxChangesOnStorage = (
   taskId: number,
   checkbox: HTMLInputElement,
 ) => {
-  const taskIndex = arrOfTask.findIndex((t) => t.id === taskId)
+  const taskIndex = findTaskIndexById(taskId)
   if (taskIndex !== -1) {
     arrOfTask[taskIndex].done = checkbox.checked
   }
@@ -107,20 +112,19 @@ const createElements = (
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
   })
+}
 
-  if (document.querySelector('#delete-all')) {
-    tasksList.insertBefore(newTask, document.querySelector('#delete-all'))
-    return
-  }
+const createDeleteAllBtn = () => {
   const clearBtn = document.createElement('button')
   clearBtn.innerText = 'Delete All'
-  clearBtn.setAttribute('class', 'remove border')
+  clearBtn.setAttribute('class', ' border')
   clearBtn.setAttribute('id', 'delete-all')
-  tasksList.appendChild(clearBtn)
+  main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
     clearTodos()
     tasksList.innerHTML = ''
   })
+  return clearBtn
 }
 
 const addTodo = () => {
@@ -153,4 +157,5 @@ window.addEventListener('load', () => {
     arrOfTask.push(task)
     createElements(task.task, task.id, task.done)
   })
+  createDeleteAllBtn()
 })
