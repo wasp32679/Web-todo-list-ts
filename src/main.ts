@@ -106,6 +106,7 @@ const createElements = (
   removeBtn.addEventListener('click', () => {
     removeTodoFromStorage(taskIndex)
     newTask.remove()
+    deleteAllBtnVisibility()
   })
 
   checkbox.addEventListener('change', () => {
@@ -117,14 +118,24 @@ const createElements = (
 const createDeleteAllBtn = () => {
   const clearBtn = document.createElement('button')
   clearBtn.innerText = 'Delete All'
-  clearBtn.setAttribute('class', ' border')
+  clearBtn.setAttribute('class', 'border')
   clearBtn.setAttribute('id', 'delete-all')
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
     clearTodos()
     tasksList.innerHTML = ''
+    deleteAllBtnVisibility()
   })
   return clearBtn
+}
+
+const deleteAllBtnVisibility = () => {
+  const clearBtn = document.querySelector<HTMLButtonElement>('#delete-all')
+  if (clearBtn && tasksList.innerHTML === '') {
+    clearBtn.style.visibility = 'hidden'
+  } else if (clearBtn && tasksList.innerHTML !== '') {
+    clearBtn.style.visibility = 'visible'
+  }
 }
 
 const addTodo = () => {
@@ -137,6 +148,7 @@ const addTodo = () => {
     createElements(taskText, id)
     todoInput.value = ''
   }
+  deleteAllBtnVisibility()
 }
 const storedTaskListStr = localStorage.getItem('taskList')
 const storedTaskListArr: Task[] = storedTaskListStr
@@ -158,4 +170,5 @@ window.addEventListener('load', () => {
     createElements(task.task, task.id, task.done)
   })
   createDeleteAllBtn()
+  deleteAllBtnVisibility()
 })
