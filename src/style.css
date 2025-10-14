@@ -74,6 +74,8 @@ ul {
   margin: 0;
   padding: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
 }
 
 li {
@@ -122,4 +124,10 @@ input[type="checkbox"] {
 .remove {
   background-color: #c64444;
   font-size: 1rem;
+}
+
+#delete-all {
+  width: 5rem;
+  align-self: center;
+  margin-bottom: 20px;
 }

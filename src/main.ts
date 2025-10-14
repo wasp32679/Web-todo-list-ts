@@ -29,10 +29,12 @@ const addTodoToStorage = (taskText: string): number => {
     done: false,
   })
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-  return arrOfTask.findIndex((t) => t.id === id)
+  return id
 }
 
-const removeTodoFromStorage = (taskIndex: number) => {
+const removeTodoFromStorage = (taskId: number) => {
+  const taskIndex = arrOfTask.findIndex((t) => t.id === taskId)
+
   if (taskIndex !== -1) {
     arrOfTask.splice(taskIndex, 1)
     localStorage.setItem('taskList', JSON.stringify(arrOfTask))
@@ -40,13 +42,19 @@ const removeTodoFromStorage = (taskIndex: number) => {
 }
 
 const saveTodoCheckboxChangesOnStorage = (
-  taskIndex: number,
+  taskId: number,
   checkbox: HTMLInputElement,
 ) => {
+  const taskIndex = arrOfTask.findIndex((t) => t.id === taskId)
   if (taskIndex !== -1) {
     arrOfTask[taskIndex].done = checkbox.checked
   }
 
+  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
+}
+
+const clearTodos = () => {
+  arrOfTask.length = 0
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
 }
 
@@ -99,6 +107,20 @@ const createElements = (
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
   })
+
+  if (document.querySelector('#delete-all')) {
+    tasksList.insertBefore(newTask, document.querySelector('#delete-all'))
+    return
+  }
+  const clearBtn = document.createElement('button')
+  clearBtn.innerText = 'Delete All'
+  clearBtn.setAttribute('class', 'remove border')
+  clearBtn.setAttribute('id', 'delete-all')
+  tasksList.appendChild(clearBtn)
+  clearBtn.addEventListener('click', () => {
+    clearTodos()
+    tasksList.innerHTML = ''
+  })
 }
 
 const addTodo = () => {
@@ -107,8 +129,8 @@ const addTodo = () => {
   } else {
     errorTxt.innerText = ''
     const taskText = todoInput.value.trim()
-    const index = addTodoToStorage(taskText)
-    createElements(taskText, index)
+    const id = addTodoToStorage(taskText)
+    createElements(taskText, id)
     todoInput.value = ''
   }
 }
@@ -128,6 +150,7 @@ todoInput.addEventListener('keypress', (e) => {
 
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
+    arrOfTask.push(task)
     createElements(task.task, task.id, task.done)
   })
 })
