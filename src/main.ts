@@ -10,7 +10,7 @@ interface Task {
   id: number
   task: string
   done: boolean
-  delay: string
+  dueDate: string
 }
 const arrOfTask: Task[] = []
 
@@ -25,13 +25,7 @@ if (
   throw new Error('Missing variables for app to start')
 }
 
-const date = new Date()
-
-const day = date.getDate()
-const month = date.getMonth() + 1
-const year = date.getFullYear()
-
-const currentDate = `${year}-${month}-${day}`
+const currentDate = new Date().toISOString().slice(0, 10)
 
 const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
   const id = Date.now()
@@ -39,7 +33,7 @@ const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
   arrOfTask.push({
     id: id,
     task: taskText,
-    delay: taskDueDate,
+    dueDate: taskDueDate,
     done: false,
   })
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
@@ -94,13 +88,14 @@ const createElements = (
 
   const taskDelay = document.createElement('p')
   taskDelay.className = 'taskdate'
-  const taskDate = document.createElement('time')
-  if (dateInput.value === '') {
-    taskDelay.innerText = taskDueDate
-  } else {
+  if (taskDueDate !== 'no due date') {
+    const taskDate = document.createElement('time')
+    taskDate.dateTime = taskDueDate
     taskDate.innerText = taskDueDate
+    taskDelay.appendChild(taskDate)
+  } else {
+    taskDelay.innerText = taskDueDate
   }
-  taskDelay.appendChild(taskDate)
   newTask.appendChild(taskDelay)
 
   const checkbox = document.createElement('input')
@@ -203,7 +198,7 @@ todoInput.addEventListener('keypress', (e) => {
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
     arrOfTask.push(task)
-    createElements(task.task, task.delay, task.id, task.done)
+    createElements(task.task, task.dueDate, task.id, task.done)
   })
   createDeleteAllBtn()
   deleteAllBtnVisibility()
