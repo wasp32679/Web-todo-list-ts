@@ -90,6 +90,7 @@ const createElements = (
   taskDelay.className = 'taskdate'
   if (taskDueDate !== 'no due date') {
     const taskDate = document.createElement('time')
+    taskDate.className = 'taskdate'
     taskDate.dateTime = taskDueDate
     taskDate.innerText = taskDueDate
     taskDelay.appendChild(taskDate)

@@ -142,14 +142,7 @@ input[type="checkbox"] {
   color: var(--color-text);
 }
 
-p {
-  margin: 0;
-}
-
 .taskdate {
-  font-size: 1rem;
-}
-
-time {
+  margin: 0;
   font-size: 1rem;
 }
