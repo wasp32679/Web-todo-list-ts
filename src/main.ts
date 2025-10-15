@@ -5,10 +5,12 @@ const todoInput = document.querySelector<HTMLInputElement>('#todo-input')
 const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
 const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
 const main = document.querySelector('main')
+const dateInput = document.querySelector<HTMLInputElement>('#todo-date-input')
 interface Task {
   id: number
   task: string
   done: boolean
+  delay: string
 }
 const arrOfTask: Task[] = []
 
@@ -17,17 +19,27 @@ if (
   todoInput === null ||
   errorTxt === null ||
   tasksList === null ||
-  main === null
+  main === null ||
+  dateInput === null
 ) {
   throw new Error('Missing variables for app to start')
 }
 
-const addTodoToStorage = (taskText: string): number => {
+const date = new Date()
+
+const day = date.getDate()
+const month = date.getMonth() + 1
+const year = date.getFullYear()
+
+const currentDate = `${year}-${month}-${day}`
+
+const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
   const id = Date.now()
 
   arrOfTask.push({
     id: id,
     task: taskText,
+    delay: taskDueDate,
     done: false,
   })
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
@@ -39,7 +51,6 @@ const findTaskIndexById = (taskId: number) =>
 
 const removeTodoFromStorage = (taskId: number) => {
   const taskIndex = findTaskIndexById(taskId)
-
   if (taskIndex !== -1) {
     arrOfTask.splice(taskIndex, 1)
     localStorage.setItem('taskList', JSON.stringify(arrOfTask))
@@ -65,6 +76,7 @@ const clearTodos = () => {
 
 const createElements = (
   taskText: string,
+  taskDueDate: string,
   taskIndex: number,
   isDone = false,
 ) => {
@@ -79,6 +91,17 @@ const createElements = (
   if (isDone) {
     taskContent.classList.add('done')
   }
+
+  const taskDelay = document.createElement('p')
+  taskDelay.className = 'taskdate'
+  const taskDate = document.createElement('time')
+  if (dateInput.value === '') {
+    taskDelay.innerText = taskDueDate
+  } else {
+    taskDate.innerText = taskDueDate
+  }
+  taskDelay.appendChild(taskDate)
+  newTask.appendChild(taskDelay)
 
   const checkbox = document.createElement('input')
   const uniqueId = `checkbox-${Date.now()}`
@@ -138,14 +161,27 @@ const deleteAllBtnVisibility = () => {
   }
 }
 
+const haveDueDate = () => {
+  return dateInput.value !== '' ? dateInput.value : 'no due date'
+}
+
 const addTodo = () => {
-  if (todoInput.value.trim() === '') {
-    errorTxt.innerText = 'Can not add an empty task.'
+  if (
+    todoInput.value.trim() === '' &&
+    dateInput.value !== '' &&
+    dateInput.value < currentDate
+  ) {
+    errorTxt.innerText = 'Can not add empty task with a past date.'
+  } else if (todoInput.value.trim() === '') {
+    errorTxt.innerText = 'Can not add empty task.'
+  } else if (dateInput.value !== '' && dateInput.value < currentDate) {
+    errorTxt.innerText = 'Can not add task with a past date.'
   } else {
     errorTxt.innerText = ''
     const taskText = todoInput.value.trim()
-    const id = addTodoToStorage(taskText)
-    createElements(taskText, id)
+    const taskDueDate = haveDueDate()
+    const id = addTodoToStorage(taskText, taskDueDate)
+    createElements(taskText, taskDueDate, id)
     todoInput.value = ''
   }
   deleteAllBtnVisibility()
@@ -167,7 +203,7 @@ todoInput.addEventListener('keypress', (e) => {
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
     arrOfTask.push(task)
-    createElements(task.task, task.id, task.done)
+    createElements(task.task, task.delay, task.id, task.done)
   })
   createDeleteAllBtn()
   deleteAllBtnVisibility()

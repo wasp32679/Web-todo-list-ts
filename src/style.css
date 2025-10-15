@@ -88,6 +88,7 @@ li {
   padding: 10px;
   margin: 20px;
   font-size: 1rem;
+  gap: 15px;
 }
 
 .tasktxt {
@@ -132,4 +133,23 @@ input[type="checkbox"] {
   margin-bottom: 0.8rem;
   font-size: 1rem;
   background-color: #6e6e6e;
+}
+
+#todo-date-input {
+  width: 10rem;
+  background: none;
+  outline: none;
+  color: var(--color-text);
+}
+
+p {
+  margin: 0;
+}
+
+.taskdate {
+  font-size: 1rem;
+}
+
+time {
+  font-size: 1rem;
 }
