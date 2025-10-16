@@ -166,6 +166,6 @@ input[type="checkbox"] {
 }
 
 .due-date-color {
-  color: #202020;
+  color: var(--color-background);
   padding: 2px;
 }

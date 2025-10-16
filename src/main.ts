@@ -166,6 +166,15 @@ const haveDueDate = () => {
   return dateInput.value !== '' ? dateInput.value : 'no due date'
 }
 
+const dueColorClasses = [
+  'taskdate--overdue',
+  'taskdate--today',
+  'taskdate--soon',
+  'taskdate--later',
+]
+
+const allDueColorClasses = Object.values(dueColorClasses)
+
 const dueDateUrgency = (
   taskDelay: HTMLParagraphElement,
   taskDueDate: string,
@@ -174,29 +183,15 @@ const dueDateUrgency = (
     return
   }
 
-  const dueColorClasses = [
-    'taskdate--overdue',
-    'taskdate--today',
-    'taskdate--soon',
-    'taskdate--later',
-  ]
-
-  dueColorClasses.forEach((c) => {
-    if (taskDelay.classList.contains(c)) {
-      taskDelay.classList.remove(c)
-    }
-  })
+  taskDelay.classList.remove(...allDueColorClasses)
 
   if (taskDueDate < currentDate) {
     taskDelay.classList.add('taskdate--overdue')
   } else if (taskDueDate === currentDate) {
     taskDelay.classList.add('taskdate--today')
-  } else if (
-    taskDueDate > currentDate &&
-    taskDueDate <= fourDaysAfterCurrentDate
-  ) {
+  } else if (taskDueDate <= fourDaysAfterCurrentDate) {
     taskDelay.classList.add('taskdate--soon')
-  } else if (taskDueDate > fourDaysAfterCurrentDate) {
+  } else {
     taskDelay.classList.add('taskdate--later')
   }
 }
