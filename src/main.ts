@@ -25,7 +25,11 @@ if (
   throw new Error('Missing variables for app to start')
 }
 
-const currentDate = new Date().toISOString().slice(0, 10)
+const now = new Date()
+const currentDate = now.toISOString().slice(0, 10)
+const dateCopy = new Date(now)
+dateCopy.setDate(now.getDate() + 4)
+const fourDaysAfterCurrentDate = dateCopy.toISOString().slice(0, 10)
 
 const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
   const id = Date.now()
@@ -90,7 +94,7 @@ const createElements = (
   taskDelay.className = 'taskdate'
   if (taskDueDate !== 'no due date') {
     const taskDate = document.createElement('time')
-    taskDate.className = 'taskdate'
+    taskDate.setAttribute('class', 'due-date-color taskdate')
     taskDate.dateTime = taskDueDate
     taskDate.innerText = taskDueDate
     taskDelay.appendChild(taskDate)
@@ -132,6 +136,7 @@ const createElements = (
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
   })
+  return taskDelay
 }
 
 const createDeleteAllBtn = () => {
@@ -161,6 +166,27 @@ const haveDueDate = () => {
   return dateInput.value !== '' ? dateInput.value : 'no due date'
 }
 
+const dueDateUrgency = (
+  taskDelay: HTMLParagraphElement,
+  taskDueDate: string,
+) => {
+  if (taskDueDate === 'no due date') {
+    return
+  }
+  if (taskDueDate < currentDate) {
+    taskDelay.style.backgroundColor = '#c64444'
+  } else if (taskDueDate === currentDate) {
+    taskDelay.style.backgroundColor = 'rgb(204, 133, 0)'
+  } else if (
+    taskDueDate > currentDate &&
+    taskDueDate <= fourDaysAfterCurrentDate
+  ) {
+    taskDelay.style.backgroundColor = 'rgba(233, 217, 0, 1)'
+  } else if (taskDueDate > fourDaysAfterCurrentDate) {
+    taskDelay.style.backgroundColor = 'rgb(65, 204, 0)'
+  }
+}
+
 const addTodo = () => {
   if (
     todoInput.value.trim() === '' &&
@@ -177,7 +203,8 @@ const addTodo = () => {
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
     const id = addTodoToStorage(taskText, taskDueDate)
-    createElements(taskText, taskDueDate, id)
+    const taskDelay = createElements(taskText, taskDueDate, id)
+    dueDateUrgency(taskDelay, taskDueDate)
     todoInput.value = ''
   }
   deleteAllBtnVisibility()
@@ -199,7 +226,13 @@ todoInput.addEventListener('keypress', (e) => {
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
     arrOfTask.push(task)
-    createElements(task.task, task.dueDate, task.id, task.done)
+    const taskDelay = createElements(
+      task.task,
+      task.dueDate,
+      task.id,
+      task.done,
+    )
+    dueDateUrgency(taskDelay, task.dueDate)
   })
   createDeleteAllBtn()
   deleteAllBtnVisibility()

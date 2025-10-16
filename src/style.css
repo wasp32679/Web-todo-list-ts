@@ -145,4 +145,10 @@ input[type="checkbox"] {
 .taskdate {
   margin: 0;
   font-size: 1rem;
+  border-radius: 5px;
+}
+
+.due-date-color {
+  color: #202020;
+  padding: 2px;
 }
