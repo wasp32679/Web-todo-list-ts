@@ -25,7 +25,11 @@ if (
   throw new Error('Missing variables for app to start')
 }
 
-const currentDate = new Date().toISOString().slice(0, 10)
+const now = new Date()
+const currentDate = now.toISOString().slice(0, 10)
+const dateCopy = new Date(now)
+dateCopy.setDate(now.getDate() + 4)
+const fourDaysAfterCurrentDate = dateCopy.toISOString().slice(0, 10)
 
 const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
   const id = Date.now()
@@ -73,9 +77,9 @@ const createElements = (
   taskDueDate: string,
   taskIndex: number,
   isDone = false,
-) => {
+): HTMLParagraphElement => {
   const newTask = document.createElement('li')
-  newTask.setAttribute('class', 'task border')
+  newTask.classList.add('task', 'border')
   tasksList.appendChild(newTask)
 
   const taskContent = document.createElement('span')
@@ -90,7 +94,7 @@ const createElements = (
   taskDelay.className = 'taskdate'
   if (taskDueDate !== 'no due date') {
     const taskDate = document.createElement('time')
-    taskDate.className = 'taskdate'
+    taskDate.classList.add('due-date-color', 'taskdate')
     taskDate.dateTime = taskDueDate
     taskDate.innerText = taskDueDate
     taskDelay.appendChild(taskDate)
@@ -119,7 +123,7 @@ const createElements = (
 
   const removeBtn = document.createElement('button')
   removeBtn.innerText = 'Remove'
-  removeBtn.setAttribute('class', 'remove border')
+  removeBtn.classList.add('remove', 'border')
   actionBox.appendChild(removeBtn)
 
   removeBtn.addEventListener('click', () => {
@@ -132,12 +136,13 @@ const createElements = (
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
   })
+  return taskDelay
 }
 
 const createDeleteAllBtn = () => {
   const clearBtn = document.createElement('button')
   clearBtn.innerText = 'Delete All'
-  clearBtn.setAttribute('class', 'border')
+  clearBtn.classList.add('border')
   clearBtn.setAttribute('id', 'delete-all')
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
@@ -161,6 +166,34 @@ const haveDueDate = () => {
   return dateInput.value !== '' ? dateInput.value : 'no due date'
 }
 
+const dueColorClasses = [
+  'taskdate--overdue',
+  'taskdate--today',
+  'taskdate--soon',
+  'taskdate--later',
+]
+
+const dueDateUrgency = (
+  taskDelay: HTMLParagraphElement,
+  taskDueDate: string,
+) => {
+  if (taskDueDate === 'no due date') {
+    return
+  }
+
+  taskDelay.classList.remove(...dueColorClasses)
+
+  if (taskDueDate < currentDate) {
+    taskDelay.classList.add('taskdate--overdue')
+  } else if (taskDueDate === currentDate) {
+    taskDelay.classList.add('taskdate--today')
+  } else if (taskDueDate <= fourDaysAfterCurrentDate) {
+    taskDelay.classList.add('taskdate--soon')
+  } else {
+    taskDelay.classList.add('taskdate--later')
+  }
+}
+
 const addTodo = () => {
   if (
     todoInput.value.trim() === '' &&
@@ -177,7 +210,8 @@ const addTodo = () => {
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
     const id = addTodoToStorage(taskText, taskDueDate)
-    createElements(taskText, taskDueDate, id)
+    const taskDelay = createElements(taskText, taskDueDate, id)
+    dueDateUrgency(taskDelay, taskDueDate)
     todoInput.value = ''
   }
   deleteAllBtnVisibility()
@@ -199,7 +233,13 @@ todoInput.addEventListener('keypress', (e) => {
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
     arrOfTask.push(task)
-    createElements(task.task, task.dueDate, task.id, task.done)
+    const taskDelay = createElements(
+      task.task,
+      task.dueDate,
+      task.id,
+      task.done,
+    )
+    dueDateUrgency(taskDelay, task.dueDate)
   })
   createDeleteAllBtn()
   deleteAllBtnVisibility()

@@ -2,6 +2,23 @@
   --color-background: #202020;
   --color-text: #bababa;
   --color-accent: #626ed9;
+  --color-due-overdue: #c64444;
+  --color-due-today: rgb(204, 133, 0);
+  --color-due-soon: rgba(233, 217, 0, 1);
+  --color-due-later: rgb(65, 204, 0);
+}
+
+.taskdate--overdue {
+  background-color: var(--color-due-overdue);
+}
+.taskdate--today {
+  background-color: var(--color-due-today);
+}
+.taskdate--soon {
+  background-color: var(--color-due-soon);
+}
+.taskdate--later {
+  background-color: var(--color-due-later);
 }
 
 html,
@@ -145,4 +162,10 @@ input[type="checkbox"] {
 .taskdate {
   margin: 0;
   font-size: 1rem;
+  border-radius: 5px;
+}
+
+.due-date-color {
+  color: var(--color-background);
+  padding: 2px;
 }
