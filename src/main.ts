@@ -79,7 +79,7 @@ const createElements = (
   isDone = false,
 ) => {
   const newTask = document.createElement('li')
-  newTask.setAttribute('class', 'task border')
+  newTask.classList.add('task', 'border')
   tasksList.appendChild(newTask)
 
   const taskContent = document.createElement('span')
@@ -94,7 +94,7 @@ const createElements = (
   taskDelay.className = 'taskdate'
   if (taskDueDate !== 'no due date') {
     const taskDate = document.createElement('time')
-    taskDate.setAttribute('class', 'due-date-color taskdate')
+    taskDate.classList.add('due-date-color', 'taskdate')
     taskDate.dateTime = taskDueDate
     taskDate.innerText = taskDueDate
     taskDelay.appendChild(taskDate)
@@ -123,7 +123,7 @@ const createElements = (
 
   const removeBtn = document.createElement('button')
   removeBtn.innerText = 'Remove'
-  removeBtn.setAttribute('class', 'remove border')
+  removeBtn.classList.add('remove', 'border')
   actionBox.appendChild(removeBtn)
 
   removeBtn.addEventListener('click', () => {
@@ -142,7 +142,7 @@ const createElements = (
 const createDeleteAllBtn = () => {
   const clearBtn = document.createElement('button')
   clearBtn.innerText = 'Delete All'
-  clearBtn.setAttribute('class', 'border')
+  clearBtn.classList.add('border')
   clearBtn.setAttribute('id', 'delete-all')
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
@@ -174,12 +174,18 @@ const dueDateUrgency = (
     return
   }
 
-  taskDelay.classList.remove(
+  const dueColorClasses = [
     'taskdate--overdue',
     'taskdate--today',
     'taskdate--soon',
     'taskdate--later',
-  )
+  ]
+
+  dueColorClasses.forEach((c) => {
+    if (taskDelay.classList.contains(c)) {
+      taskDelay.classList.remove(c)
+    }
+  })
 
   if (taskDueDate < currentDate) {
     taskDelay.classList.add('taskdate--overdue')
