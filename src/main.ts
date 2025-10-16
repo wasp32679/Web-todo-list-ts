@@ -77,7 +77,7 @@ const createElements = (
   taskDueDate: string,
   taskIndex: number,
   isDone = false,
-) => {
+): HTMLParagraphElement => {
   const newTask = document.createElement('li')
   newTask.classList.add('task', 'border')
   tasksList.appendChild(newTask)
@@ -173,8 +173,6 @@ const dueColorClasses = [
   'taskdate--later',
 ]
 
-const allDueColorClasses = Object.values(dueColorClasses)
-
 const dueDateUrgency = (
   taskDelay: HTMLParagraphElement,
   taskDueDate: string,
@@ -183,7 +181,7 @@ const dueDateUrgency = (
     return
   }
 
-  taskDelay.classList.remove(...allDueColorClasses)
+  taskDelay.classList.remove(...dueColorClasses)
 
   if (taskDueDate < currentDate) {
     taskDelay.classList.add('taskdate--overdue')
