@@ -173,17 +173,25 @@ const dueDateUrgency = (
   if (taskDueDate === 'no due date') {
     return
   }
+
+  taskDelay.classList.remove(
+    'taskdate--overdue',
+    'taskdate--today',
+    'taskdate--soon',
+    'taskdate--later',
+  )
+
   if (taskDueDate < currentDate) {
-    taskDelay.style.backgroundColor = '#c64444'
+    taskDelay.classList.add('taskdate--overdue')
   } else if (taskDueDate === currentDate) {
-    taskDelay.style.backgroundColor = 'rgb(204, 133, 0)'
+    taskDelay.classList.add('taskdate--today')
   } else if (
     taskDueDate > currentDate &&
     taskDueDate <= fourDaysAfterCurrentDate
   ) {
-    taskDelay.style.backgroundColor = 'rgba(233, 217, 0, 1)'
+    taskDelay.classList.add('taskdate--soon')
   } else if (taskDueDate > fourDaysAfterCurrentDate) {
-    taskDelay.style.backgroundColor = 'rgb(65, 204, 0)'
+    taskDelay.classList.add('taskdate--later')
   }
 }
 
