@@ -6,6 +6,9 @@ const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
 const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
 const main = document.querySelector('main')
 const dateInput = document.querySelector<HTMLInputElement>('#todo-date-input')
+const overdueMessageContainer = document.querySelector<HTMLDivElement>(
+  '#overdue-message-container',
+)
 interface Task {
   id: number
   task: string
@@ -20,7 +23,8 @@ if (
   errorTxt === null ||
   tasksList === null ||
   main === null ||
-  dateInput === null
+  dateInput === null ||
+  overdueMessageContainer === null
 ) {
   throw new Error('Missing variables for app to start')
 }
@@ -130,11 +134,16 @@ const createElements = (
     removeTodoFromStorage(taskIndex)
     newTask.remove()
     deleteAllBtnVisibility()
+    deleteOverdueMsg()
   })
 
   checkbox.addEventListener('change', () => {
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
+    haveOverdueTask(taskDueDate)
+    if (checkbox.checked) {
+      deleteOverdueMsg()
+    }
   })
   return taskDelay
 }
@@ -194,6 +203,31 @@ const dueDateUrgency = (
   }
 }
 
+const haveOverdueTask = (taskDueDate: string) => {
+  if (document.getElementById('overdue-message')) return
+
+  if (taskDueDate < currentDate) {
+    createOverdueMsg()
+  } else {
+    overdueMessageContainer.innerHTML = ''
+  }
+}
+
+const createOverdueMsg = () => {
+  const overdueMsg = document.createElement('p')
+  overdueMsg.setAttribute('id', 'overdue-message')
+  overdueMsg.innerText = 'You have overdue task(s)!'
+  overdueMessageContainer.appendChild(overdueMsg)
+}
+
+const deleteOverdueMsg = () => {
+  const overdueTasks = arrOfTask.filter((task) => task.dueDate < currentDate)
+  const overdueTasksUndone = overdueTasks.filter((task) => task.done !== true)
+  if (overdueTasksUndone.length === 0 || overdueTasks.length === 0) {
+    overdueMessageContainer.innerHTML = ''
+  }
+}
+
 const addTodo = () => {
   if (
     todoInput.value.trim() === '' &&
@@ -240,7 +274,9 @@ window.addEventListener('load', () => {
       task.done,
     )
     dueDateUrgency(taskDelay, task.dueDate)
+    haveOverdueTask(task.dueDate)
   })
+
   createDeleteAllBtn()
   deleteAllBtnVisibility()
 })
