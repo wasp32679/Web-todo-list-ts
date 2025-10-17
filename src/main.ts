@@ -134,16 +134,13 @@ const createElements = (
     removeTodoFromStorage(taskIndex)
     newTask.remove()
     deleteAllBtnVisibility()
-    deleteOverdueMsg()
+    updateOverdueMsg()
   })
 
   checkbox.addEventListener('change', () => {
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
-    haveOverdueTask(taskDueDate)
-    if (checkbox.checked) {
-      deleteOverdueMsg()
-    }
+    updateOverdueMsg()
   })
   return taskDelay
 }
@@ -203,28 +200,19 @@ const dueDateUrgency = (
   }
 }
 
-const haveOverdueTask = (taskDueDate: string) => {
-  if (document.getElementById('overdue-message')) return
+const updateOverdueMsg = () => {
+  const hasOverdueUndoneTasks = arrOfTask.some(
+    (task) => task.dueDate < currentDate && !task.done,
+  )
+  const msgElement = document.getElementById('overdue-message')
 
-  if (taskDueDate < currentDate) {
-    createOverdueMsg()
-  } else {
-    overdueMessageContainer.innerHTML = ''
-  }
-}
-
-const createOverdueMsg = () => {
-  const overdueMsg = document.createElement('p')
-  overdueMsg.setAttribute('id', 'overdue-message')
-  overdueMsg.innerText = 'You have overdue task(s)!'
-  overdueMessageContainer.appendChild(overdueMsg)
-}
-
-const deleteOverdueMsg = () => {
-  const overdueTasks = arrOfTask.filter((task) => task.dueDate < currentDate)
-  const overdueTasksUndone = overdueTasks.filter((task) => task.done !== true)
-  if (overdueTasksUndone.length === 0 || overdueTasks.length === 0) {
-    overdueMessageContainer.innerHTML = ''
+  if (hasOverdueUndoneTasks && !msgElement) {
+    const overdueMsg = document.createElement('p')
+    overdueMsg.setAttribute('id', 'overdue-message')
+    overdueMsg.innerText = 'You have overdue task(s)!'
+    overdueMessageContainer.appendChild(overdueMsg)
+  } else if (!hasOverdueUndoneTasks && msgElement) {
+    msgElement.remove()
   }
 }
 
@@ -274,9 +262,8 @@ window.addEventListener('load', () => {
       task.done,
     )
     dueDateUrgency(taskDelay, task.dueDate)
-    haveOverdueTask(task.dueDate)
   })
-
+  updateOverdueMsg()
   createDeleteAllBtn()
   deleteAllBtnVisibility()
 })
