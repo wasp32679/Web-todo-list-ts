@@ -23,7 +23,7 @@
 
 html,
 body {
-  padding: 30px;
+  padding: 20px;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -140,7 +140,7 @@ input[type="checkbox"] {
 }
 
 .remove {
-  background-color: #c64444;
+  background-color: var(--color-due-overdue);
   font-size: 1rem;
 }
 
@@ -168,4 +168,12 @@ input[type="checkbox"] {
 .due-date-color {
   color: var(--color-background);
   padding: 2px;
+}
+
+#overdue-message {
+  font-size: 2rem;
+  background-color: var(--color-due-overdue);
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
 }
