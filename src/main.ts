@@ -89,7 +89,7 @@ const createElements = (
   const taskContent = document.createElement('span')
   taskContent.className = 'tasktxt'
   newTask.appendChild(taskContent)
-  taskContent.innerText = taskText
+  taskContent.textContent = taskText
   if (isDone) {
     taskContent.classList.add('done')
   }
@@ -100,10 +100,10 @@ const createElements = (
     const taskDate = document.createElement('time')
     taskDate.classList.add('due-date-color', 'taskdate')
     taskDate.dateTime = taskDueDate
-    taskDate.innerText = taskDueDate
+    taskDate.textContent = taskDueDate
     taskDelay.appendChild(taskDate)
   } else {
-    taskDelay.innerText = taskDueDate
+    taskDelay.textContent = taskDueDate
   }
   newTask.appendChild(taskDelay)
 
@@ -119,14 +119,14 @@ const createElements = (
   const checkLabel = document.createElement('label')
   checkLabel.setAttribute('for', uniqueId)
   checkLabel.className = 'doneLabel'
-  checkLabel.innerText = 'Done'
+  checkLabel.textContent = 'Done'
 
   newTask.appendChild(actionBox)
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
   const removeBtn = document.createElement('button')
-  removeBtn.innerText = 'Remove'
+  removeBtn.textContent = 'Remove'
   removeBtn.classList.add('remove', 'border')
   actionBox.appendChild(removeBtn)
 
@@ -147,9 +147,9 @@ const createElements = (
 
 const createDeleteAllBtn = () => {
   const clearBtn = document.createElement('button')
-  clearBtn.innerText = 'Delete All'
+  clearBtn.textContent = 'Delete All'
   clearBtn.classList.add('border')
-  clearBtn.setAttribute('id', 'delete-all')
+  clearBtn.id = 'delete-all'
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
     clearTodos()
@@ -202,14 +202,17 @@ const dueDateUrgency = (
 
 const updateOverdueMsg = () => {
   const hasOverdueUndoneTasks = arrOfTask.some(
-    (task) => task.dueDate < currentDate && !task.done,
+    (task) =>
+      task.dueDate !== 'no due date' &&
+      task.dueDate < new Date().toISOString().slice(0, 10) &&
+      !task.done,
   )
   const msgElement = document.getElementById('overdue-message')
 
   if (hasOverdueUndoneTasks && !msgElement) {
     const overdueMsg = document.createElement('p')
-    overdueMsg.setAttribute('id', 'overdue-message')
-    overdueMsg.innerText = 'You have overdue task(s)!'
+    overdueMsg.id = 'overdue-message'
+    overdueMsg.textContent = 'You have overdue task(s)!'
     overdueMessageContainer.appendChild(overdueMsg)
   } else if (!hasOverdueUndoneTasks && msgElement) {
     msgElement.remove()
@@ -222,13 +225,13 @@ const addTodo = () => {
     dateInput.value !== '' &&
     dateInput.value < currentDate
   ) {
-    errorTxt.innerText = 'Can not add empty task with a past date.'
+    errorTxt.textContent = 'Can not add empty task with a past date.'
   } else if (todoInput.value.trim() === '') {
-    errorTxt.innerText = 'Can not add empty task.'
+    errorTxt.textContent = 'Can not add empty task.'
   } else if (dateInput.value !== '' && dateInput.value < currentDate) {
-    errorTxt.innerText = 'Can not add task with a past date.'
+    errorTxt.textContent = 'Can not add task with a past date.'
   } else {
-    errorTxt.innerText = ''
+    errorTxt.textContent = ''
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
     const id = addTodoToStorage(taskText, taskDueDate)
