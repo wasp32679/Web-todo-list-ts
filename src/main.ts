@@ -1,223 +1,14 @@
 import './style.css'
+import type { Task } from './types/task'
+import { getCurrentDate, haveDueDate } from './utils/date'
+import { arrOfTask } from './services/storage'
+import { addTodoToStorage } from './services/storage'
+import { updateUI, dueDateUrgency, deleteAllBtnVisibility } from './UI/updateUi'
+import { createElements, createDeleteAllBtn } from './UI/createEl'
+import { elements } from './utils/dom'
+const { addBtn, todoInput, errorTxt, dateInput } = elements
 
-const addBtn = document.querySelector<HTMLButtonElement>('#add-todo-button')
-const todoInput = document.querySelector<HTMLInputElement>('#todo-input')
-const errorTxt = document.querySelector<HTMLDivElement>('#errorText')
-const tasksList = document.querySelector<HTMLUListElement>('#todo-elements')
-const main = document.querySelector('main')
-const dateInput = document.querySelector<HTMLInputElement>('#todo-date-input')
-const overdueMessageContainer = document.querySelector<HTMLDivElement>(
-  '#overdue-message-container',
-)
-interface Task {
-  id: number
-  task: string
-  done: boolean
-  dueDate: string
-}
-const arrOfTask: Task[] = []
-
-if (
-  addBtn === null ||
-  todoInput === null ||
-  errorTxt === null ||
-  tasksList === null ||
-  main === null ||
-  dateInput === null ||
-  overdueMessageContainer === null
-) {
-  throw new Error('Missing variables for app to start')
-}
-
-const now = new Date()
-const currentDate = now.toISOString().slice(0, 10)
-const dateCopy = new Date(now)
-dateCopy.setDate(now.getDate() + 4)
-const fourDaysAfterCurrentDate = dateCopy.toISOString().slice(0, 10)
-
-const addTodoToStorage = (taskText: string, taskDueDate: string): number => {
-  const id = Date.now()
-
-  arrOfTask.push({
-    id: id,
-    task: taskText,
-    dueDate: taskDueDate,
-    done: false,
-  })
-  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-  return id
-}
-
-const findTaskIndexById = (taskId: number) =>
-  arrOfTask.findIndex((t) => t.id === taskId)
-
-const removeTodoFromStorage = (taskId: number) => {
-  const taskIndex = findTaskIndexById(taskId)
-  if (taskIndex !== -1) {
-    arrOfTask.splice(taskIndex, 1)
-    localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-  }
-}
-
-const saveTodoCheckboxChangesOnStorage = (
-  taskId: number,
-  checkbox: HTMLInputElement,
-) => {
-  const taskIndex = findTaskIndexById(taskId)
-  if (taskIndex !== -1) {
-    arrOfTask[taskIndex].done = checkbox.checked
-  }
-
-  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-}
-
-const clearTodos = () => {
-  arrOfTask.length = 0
-  localStorage.setItem('taskList', JSON.stringify(arrOfTask))
-}
-
-const createElements = (
-  taskText: string,
-  taskDueDate: string,
-  taskIndex: number,
-  isDone = false,
-): HTMLParagraphElement => {
-  const newTask = document.createElement('li')
-  newTask.classList.add('task', 'border')
-  tasksList.appendChild(newTask)
-
-  const taskContent = document.createElement('span')
-  taskContent.className = 'tasktxt'
-  newTask.appendChild(taskContent)
-  taskContent.textContent = taskText
-  if (isDone) {
-    taskContent.classList.add('done')
-  }
-
-  const taskDelay = document.createElement('p')
-  taskDelay.className = 'taskdate'
-  if (taskDueDate !== 'no due date') {
-    const taskDate = document.createElement('time')
-    taskDate.classList.add('due-date-color', 'taskdate')
-    taskDate.dateTime = taskDueDate
-    taskDate.textContent = taskDueDate
-    taskDelay.appendChild(taskDate)
-  } else {
-    taskDelay.textContent = taskDueDate
-  }
-  newTask.appendChild(taskDelay)
-
-  const checkbox = document.createElement('input')
-  const uniqueId = `checkbox-${Date.now()}`
-  checkbox.setAttribute('type', 'checkbox')
-  checkbox.id = uniqueId
-  checkbox.checked = isDone
-
-  const actionBox = document.createElement('div')
-  actionBox.className = 'actionBox'
-
-  const checkLabel = document.createElement('label')
-  checkLabel.setAttribute('for', uniqueId)
-  checkLabel.className = 'doneLabel'
-  checkLabel.textContent = 'Done'
-
-  newTask.appendChild(actionBox)
-  actionBox.appendChild(checkLabel)
-  actionBox.appendChild(checkbox)
-
-  const removeBtn = document.createElement('button')
-  removeBtn.textContent = 'Remove'
-  removeBtn.classList.add('remove', 'border')
-  actionBox.appendChild(removeBtn)
-
-  removeBtn.addEventListener('click', () => {
-    removeTodoFromStorage(taskIndex)
-    newTask.remove()
-    deleteAllBtnVisibility()
-    updateOverdueMsg()
-  })
-
-  checkbox.addEventListener('change', () => {
-    taskContent.classList.toggle('done', checkbox.checked)
-    saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
-    updateOverdueMsg()
-  })
-  return taskDelay
-}
-
-const createDeleteAllBtn = () => {
-  const clearBtn = document.createElement('button')
-  clearBtn.textContent = 'Delete All'
-  clearBtn.classList.add('border')
-  clearBtn.id = 'delete-all'
-  main.appendChild(clearBtn)
-  clearBtn.addEventListener('click', () => {
-    clearTodos()
-    tasksList.innerHTML = ''
-    deleteAllBtnVisibility()
-  })
-  return clearBtn
-}
-
-const deleteAllBtnVisibility = () => {
-  const clearBtn = document.querySelector<HTMLButtonElement>('#delete-all')
-  if (clearBtn && tasksList.innerHTML === '') {
-    clearBtn.style.visibility = 'hidden'
-  } else if (clearBtn && tasksList.innerHTML !== '') {
-    clearBtn.style.visibility = 'visible'
-  }
-}
-
-const haveDueDate = () => {
-  return dateInput.value !== '' ? dateInput.value : 'no due date'
-}
-
-const dueColorClasses = [
-  'taskdate--overdue',
-  'taskdate--today',
-  'taskdate--soon',
-  'taskdate--later',
-]
-
-const dueDateUrgency = (
-  taskDelay: HTMLParagraphElement,
-  taskDueDate: string,
-) => {
-  if (taskDueDate === 'no due date') {
-    return
-  }
-
-  taskDelay.classList.remove(...dueColorClasses)
-
-  if (taskDueDate < currentDate) {
-    taskDelay.classList.add('taskdate--overdue')
-  } else if (taskDueDate === currentDate) {
-    taskDelay.classList.add('taskdate--today')
-  } else if (taskDueDate <= fourDaysAfterCurrentDate) {
-    taskDelay.classList.add('taskdate--soon')
-  } else {
-    taskDelay.classList.add('taskdate--later')
-  }
-}
-
-const updateOverdueMsg = () => {
-  const hasOverdueUndoneTasks = arrOfTask.some(
-    (task) =>
-      task.dueDate !== 'no due date' &&
-      task.dueDate < new Date().toISOString().slice(0, 10) &&
-      !task.done,
-  )
-  const msgElement = document.getElementById('overdue-message')
-
-  if (hasOverdueUndoneTasks && !msgElement) {
-    const overdueMsg = document.createElement('p')
-    overdueMsg.id = 'overdue-message'
-    overdueMsg.textContent = 'You have overdue task(s)!'
-    overdueMessageContainer.appendChild(overdueMsg)
-  } else if (!hasOverdueUndoneTasks && msgElement) {
-    msgElement.remove()
-  }
-}
+const currentDate = getCurrentDate()
 
 const addTodo = () => {
   if (
@@ -235,8 +26,8 @@ const addTodo = () => {
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
     const id = addTodoToStorage(taskText, taskDueDate)
-    const taskDelay = createElements(taskText, taskDueDate, id)
-    dueDateUrgency(taskDelay, taskDueDate)
+    const dueDateParagraph = createElements(taskText, taskDueDate, id)
+    dueDateUrgency(dueDateParagraph, taskDueDate)
     todoInput.value = ''
   }
   deleteAllBtnVisibility()
@@ -246,9 +37,8 @@ const storedTaskListArr: Task[] = storedTaskListStr
   ? JSON.parse(storedTaskListStr)
   : []
 
-addBtn.addEventListener('click', () => {
-  addTodo()
-})
+addBtn.addEventListener('click', addTodo)
+
 todoInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     addTodo()
@@ -258,15 +48,14 @@ todoInput.addEventListener('keypress', (e) => {
 window.addEventListener('load', () => {
   storedTaskListArr.forEach((task) => {
     arrOfTask.push(task)
-    const taskDelay = createElements(
+    const dueDateParagraph = createElements(
       task.task,
       task.dueDate,
       task.id,
       task.done,
     )
-    dueDateUrgency(taskDelay, task.dueDate)
+    dueDateUrgency(dueDateParagraph, task.dueDate)
   })
-  updateOverdueMsg()
   createDeleteAllBtn()
-  deleteAllBtnVisibility()
+  updateUI()
 })
