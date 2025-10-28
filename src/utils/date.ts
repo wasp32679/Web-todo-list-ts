@@ -1,4 +1,5 @@
 import { elements } from './dom'
+
 const { dateInput } = elements
 
 export function getCurrentDate(): string {

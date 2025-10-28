@@ -1,11 +1,11 @@
 import './style.css'
+import { addTodoToStorage, arrOfTask } from './services/storage'
 import type { Task } from './types/task'
+import { createDeleteAllBtn, createElements } from './UI/createEl'
+import { deleteAllBtnVisibility, dueDateUrgency, updateUI } from './UI/updateUi'
 import { getCurrentDate, haveDueDate } from './utils/date'
-import { arrOfTask } from './services/storage'
-import { addTodoToStorage } from './services/storage'
-import { updateUI, dueDateUrgency, deleteAllBtnVisibility } from './UI/updateUi'
-import { createElements, createDeleteAllBtn } from './UI/createEl'
 import { elements } from './utils/dom'
+
 const { addBtn, todoInput, errorTxt, dateInput } = elements
 
 const currentDate = getCurrentDate()

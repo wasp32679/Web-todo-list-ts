@@ -1,7 +1,9 @@
 import { elements } from '../utils/dom'
+
 const { tasksList, overdueMessageContainer } = elements
+
 import { arrOfTask } from '../services/storage'
-import { getFutureDateString, getCurrentDate } from '../utils/date'
+import { getCurrentDate, getFutureDateString } from '../utils/date'
 
 const currentDate = getCurrentDate()
 const fourDaysAfterCurrentDate = getFutureDateString(4)

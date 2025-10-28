@@ -1,11 +1,13 @@
 import { elements } from '../utils/dom'
+
 const { tasksList, main } = elements
+
 import {
-  saveTodoCheckboxChangesOnStorage,
-  removeTodoFromStorage,
   clearTodos,
+  removeTodoFromStorage,
+  saveTodoCheckboxChangesOnStorage,
 } from '../services/storage'
-import { updateUI, updateOverdueMsg } from './updateUi'
+import { updateOverdueMsg, updateUI } from './updateUi'
 
 export const createElements = (
   taskText: string,
