@@ -56,6 +56,4 @@ export const initializeFromStorage = () => {
     : []
 
   arrOfTask.push(...storedTaskListArr)
-
-  return storedTaskListArr
 }

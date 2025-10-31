@@ -44,9 +44,11 @@ const dueColorClasses = [
   'taskdate--later',
 ]
 
+const urgency_soon_treshold = 4
+
 const getUrgencyClass = (dueDate: string): string | null => {
   const currentDate = getCurrentDate()
-  const fourDaysAfterCurrentDate = getFutureDateString(4)
+  const fourDaysAfterCurrentDate = getFutureDateString(urgency_soon_treshold)
   if (dueDate === 'no due date') return null
   if (dueDate < currentDate) return 'taskdate--overdue'
   if (dueDate === currentDate) return 'taskdate--today'

@@ -1,5 +1,9 @@
 import './style.css'
-import { addTodoToStorage, initializeFromStorage } from './services/storage'
+import {
+  addTodoToStorage,
+  arrOfTask,
+  initializeFromStorage,
+} from './services/storage'
 import { createDeleteAllBtn, createTaskElement } from './UI/createEl'
 import { deleteAllBtnVisibility, dueDateUrgency, updateUI } from './UI/updateUi'
 import { getCurrentDate } from './utils/date'
@@ -49,9 +53,9 @@ todoInput.addEventListener('keypress', (e) => {
 })
 
 window.addEventListener('load', () => {
-  const tasks = initializeFromStorage()
+  initializeFromStorage()
 
-  tasks.forEach((task) => {
+  arrOfTask.forEach((task) => {
     const { newTask, dueDateParagraph } = createTaskElement(
       task.task,
       task.dueDate,

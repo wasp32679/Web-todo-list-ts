@@ -12,7 +12,7 @@ import { updateOverdueMsg, updateUI } from './updateUi'
 export const createTaskElement = (
   taskText: string,
   taskDueDate: string,
-  taskIndex: number,
+  taskId: number,
   isDone = false,
 ): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
@@ -40,7 +40,7 @@ export const createTaskElement = (
   newTask.appendChild(dueDateParagraph)
 
   const checkbox = document.createElement('input')
-  const uniqueId = `checkbox-${taskIndex}`
+  const uniqueId = `checkbox-${taskId}`
   checkbox.setAttribute('type', 'checkbox')
   checkbox.id = uniqueId
   checkbox.checked = isDone
@@ -63,14 +63,14 @@ export const createTaskElement = (
   actionBox.appendChild(removeBtn)
 
   removeBtn.addEventListener('click', () => {
-    removeTodoFromStorage(taskIndex)
+    removeTodoFromStorage(taskId)
     newTask.remove()
     updateUI()
   })
 
   checkbox.addEventListener('change', () => {
     taskContent.classList.toggle('done', checkbox.checked)
-    saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
+    saveTodoCheckboxChangesOnStorage(taskId, checkbox)
     updateOverdueMsg()
   })
   return {
