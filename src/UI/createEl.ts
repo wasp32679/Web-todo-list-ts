@@ -9,15 +9,14 @@ import {
 } from '../services/storage'
 import { updateOverdueMsg, updateUI } from './updateUi'
 
-export const createElements = (
+export const createTaskElement = (
   taskText: string,
   taskDueDate: string,
   taskIndex: number,
   isDone = false,
-): HTMLParagraphElement => {
+): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
   newTask.classList.add('task', 'border')
-  tasksList.appendChild(newTask)
 
   const taskContent = document.createElement('span')
   taskContent.className = 'tasktxt'
@@ -41,20 +40,20 @@ export const createElements = (
   newTask.appendChild(dueDateParagraph)
 
   const checkbox = document.createElement('input')
-  const uniqueId = `checkbox-${Date.now()}`
+  const uniqueId = `checkbox-${taskIndex}`
   checkbox.setAttribute('type', 'checkbox')
   checkbox.id = uniqueId
   checkbox.checked = isDone
 
   const actionBox = document.createElement('div')
   actionBox.className = 'actionBox'
+  newTask.appendChild(actionBox)
 
   const checkLabel = document.createElement('label')
   checkLabel.setAttribute('for', uniqueId)
   checkLabel.className = 'doneLabel'
   checkLabel.textContent = 'Done'
 
-  newTask.appendChild(actionBox)
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
@@ -74,7 +73,10 @@ export const createElements = (
     saveTodoCheckboxChangesOnStorage(taskIndex, checkbox)
     updateOverdueMsg()
   })
-  return dueDateParagraph
+  return {
+    newTask,
+    dueDateParagraph,
+  }
 }
 
 export const createDeleteAllBtn = () => {
@@ -85,7 +87,7 @@ export const createDeleteAllBtn = () => {
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', () => {
     clearTodos()
-    tasksList.innerHTML = ''
+    tasksList.replaceChildren()
     updateUI()
   })
   return clearBtn

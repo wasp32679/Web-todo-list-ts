@@ -1,16 +1,18 @@
 import './style.css'
-import { addTodoToStorage, arrOfTask } from './services/storage'
-import type { Task } from './types/task'
-import { createDeleteAllBtn, createElements } from './UI/createEl'
+import { addTodoToStorage, initializeFromStorage } from './services/storage'
+import { createDeleteAllBtn, createTaskElement } from './UI/createEl'
 import { deleteAllBtnVisibility, dueDateUrgency, updateUI } from './UI/updateUi'
-import { getCurrentDate, haveDueDate } from './utils/date'
+import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
 
-const { addBtn, todoInput, errorTxt, dateInput } = elements
+const { addBtn, todoInput, errorTxt, dateInput, tasksList } = elements
 
-const currentDate = getCurrentDate()
+const haveDueDate = () => {
+  return dateInput.value !== '' ? dateInput.value : 'no due date'
+}
 
 const addTodo = () => {
+  const currentDate = getCurrentDate()
   if (
     todoInput.value.trim() === '' &&
     dateInput.value !== '' &&
@@ -26,16 +28,17 @@ const addTodo = () => {
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
     const id = addTodoToStorage(taskText, taskDueDate)
-    const dueDateParagraph = createElements(taskText, taskDueDate, id)
+    const { newTask, dueDateParagraph } = createTaskElement(
+      taskText,
+      taskDueDate,
+      id,
+    )
+    tasksList.appendChild(newTask)
     dueDateUrgency(dueDateParagraph, taskDueDate)
     todoInput.value = ''
   }
   deleteAllBtnVisibility()
 }
-const storedTaskListStr = localStorage.getItem('taskList')
-const storedTaskListArr: Task[] = storedTaskListStr
-  ? JSON.parse(storedTaskListStr)
-  : []
 
 addBtn.addEventListener('click', addTodo)
 
@@ -46,14 +49,16 @@ todoInput.addEventListener('keypress', (e) => {
 })
 
 window.addEventListener('load', () => {
-  storedTaskListArr.forEach((task) => {
-    arrOfTask.push(task)
-    const dueDateParagraph = createElements(
+  const tasks = initializeFromStorage()
+
+  tasks.forEach((task) => {
+    const { newTask, dueDateParagraph } = createTaskElement(
       task.task,
       task.dueDate,
       task.id,
       task.done,
     )
+    tasksList.appendChild(newTask)
     dueDateUrgency(dueDateParagraph, task.dueDate)
   })
   createDeleteAllBtn()

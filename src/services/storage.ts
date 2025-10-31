@@ -48,3 +48,14 @@ export const clearTodos = () => {
   arrOfTask.length = 0
   updateStorage()
 }
+
+export const initializeFromStorage = () => {
+  const storedTaskListStr = localStorage.getItem('taskList')
+  const storedTaskListArr: Task[] = storedTaskListStr
+    ? JSON.parse(storedTaskListStr)
+    : []
+
+  arrOfTask.push(...storedTaskListArr)
+
+  return storedTaskListArr
+}

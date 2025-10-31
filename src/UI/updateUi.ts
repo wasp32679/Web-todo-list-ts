@@ -5,14 +5,11 @@ const { tasksList, overdueMessageContainer } = elements
 import { arrOfTask } from '../services/storage'
 import { getCurrentDate, getFutureDateString } from '../utils/date'
 
-const currentDate = getCurrentDate()
-const fourDaysAfterCurrentDate = getFutureDateString(4)
-
 export const updateOverdueMsg = () => {
   const hasOverdueUndoneTasks = arrOfTask.some(
     (task) =>
       task.dueDate !== 'no due date' &&
-      task.dueDate < new Date().toISOString().slice(0, 10) &&
+      task.dueDate < getCurrentDate() &&
       !task.done,
   )
   const msgElement = document.getElementById('overdue-message')
@@ -29,10 +26,9 @@ export const updateOverdueMsg = () => {
 
 export const deleteAllBtnVisibility = () => {
   const clearBtn = document.querySelector<HTMLButtonElement>('#delete-all')
-  if (clearBtn && tasksList.innerHTML === '') {
-    clearBtn.style.visibility = 'hidden'
-  } else if (clearBtn && tasksList.innerHTML !== '') {
-    clearBtn.style.visibility = 'visible'
+  if (clearBtn) {
+    clearBtn.style.visibility =
+      tasksList.children.length === 0 ? 'hidden' : 'visible'
   }
 }
 
@@ -49,6 +45,8 @@ const dueColorClasses = [
 ]
 
 const getUrgencyClass = (dueDate: string): string | null => {
+  const currentDate = getCurrentDate()
+  const fourDaysAfterCurrentDate = getFutureDateString(4)
   if (dueDate === 'no due date') return null
   if (dueDate < currentDate) return 'taskdate--overdue'
   if (dueDate === currentDate) return 'taskdate--today'
