@@ -1,6 +1,22 @@
 export interface Task {
   id: number
-  task: string
+  title: string
+  content: string
+  due_date: string
   done: boolean
-  dueDate: string
+}
+
+export interface TaskInsert {
+  title: string
+  content: string
+  due_date: string
+  done: boolean
+}
+
+export interface TaskUpdate {
+  id: number
+  title: string
+  content: string
+  due_date: string
+  done?: boolean
 }
