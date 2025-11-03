@@ -4,12 +4,13 @@ const { tasksList, overdueMessageContainer } = elements
 
 import { arrOfTask } from '../services/storage'
 import { getCurrentDate, getFutureDateString } from '../utils/date'
+import { createTaskElement, createDeleteAllBtn } from './createEl'
 
 export const updateOverdueMsg = () => {
   const hasOverdueUndoneTasks = arrOfTask.some(
     (task) =>
-      task.dueDate !== 'no due date' &&
-      task.dueDate < getCurrentDate() &&
+      task.due_date !== 'no due date' &&
+      task.due_date < getCurrentDate() &&
       !task.done,
   )
   const msgElement = document.getElementById('overdue-message')
@@ -65,4 +66,20 @@ export const dueDateUrgency = (
     dueDateParagraph.classList.remove(...dueColorClasses)
     dueDateParagraph.classList.add(urgencyClass)
   }
+}
+
+export const renderTodos = () => {
+  arrOfTask.forEach((task) => {
+    const { newTask, dueDateParagraph } = createTaskElement(
+      task.content,
+      task.due_date,
+      task.id,
+      task.done,
+    )
+    tasksList.appendChild(newTask)
+    dueDateUrgency(dueDateParagraph, task.due_date)
+  })
+
+  createDeleteAllBtn()
+  updateUI()
 }

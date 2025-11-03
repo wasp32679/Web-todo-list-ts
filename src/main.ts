@@ -4,8 +4,8 @@ import {
   arrOfTask,
   initializeFromStorage,
 } from './services/storage'
-import { createDeleteAllBtn, createTaskElement } from './UI/createEl'
-import { deleteAllBtnVisibility, dueDateUrgency, updateUI } from './UI/updateUi'
+import { createTaskElement } from './UI/createEl'
+import { deleteAllBtnVisibility, dueDateUrgency } from './UI/updateUi'
 import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
 
@@ -35,7 +35,6 @@ const addTodo = () => {
     const { newTask, dueDateParagraph } = createTaskElement(
       taskText,
       taskDueDate,
-      id,
     )
     tasksList.appendChild(newTask)
     dueDateUrgency(dueDateParagraph, taskDueDate)
@@ -54,17 +53,4 @@ todoInput.addEventListener('keypress', (e) => {
 
 window.addEventListener('load', () => {
   initializeFromStorage()
-
-  arrOfTask.forEach((task) => {
-    const { newTask, dueDateParagraph } = createTaskElement(
-      task.task,
-      task.dueDate,
-      task.id,
-      task.done,
-    )
-    tasksList.appendChild(newTask)
-    dueDateUrgency(dueDateParagraph, task.dueDate)
-  })
-  createDeleteAllBtn()
-  updateUI()
 })

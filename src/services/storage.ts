@@ -1,25 +1,35 @@
-import type { Task } from '../types/task'
+import type { Task, TaskInsert } from '../types/task'
 
 export const arrOfTask: Task[] = []
+
+export const arrOfTaskInsert: TaskInsert[] = []
 
 const updateStorage = () => {
   localStorage.setItem('taskList', JSON.stringify(arrOfTask))
 }
+import { renderTodos } from '../UI/updateUi'
 
-export const addTodoToStorage = (
-  taskText: string,
-  taskDueDate: string,
-): number => {
-  const id = Date.now()
+export async function addTodoToStorage(taskText: string, taskDueDate: string) {
+  const response = await fetch('https://api.todos.in.jt-lab.ch/todos', {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+      Prefer: 'return=representation',
+    },
+    body: JSON.stringify({
+      title: taskText,
+      content: taskText,
+      due_date: taskDueDate,
+      done: false,
+    }),
+  })
 
-  arrOfTask.push({
-    id: id,
-    task: taskText,
-    dueDate: taskDueDate,
+  arrOfTaskInsert.push({
+    title: taskText,
+    content: taskText,
+    due_date: taskDueDate,
     done: false,
   })
-  updateStorage()
-  return id
 }
 
 const findTaskIndexById = (taskId: number) =>
@@ -49,11 +59,22 @@ export const clearTodos = () => {
   updateStorage()
 }
 
-export const initializeFromStorage = () => {
-  const storedTaskListStr = localStorage.getItem('taskList')
-  const storedTaskListArr: Task[] = storedTaskListStr
-    ? JSON.parse(storedTaskListStr)
-    : []
+export async function initializeFromStorage() {
+  try {
+    const resp = await fetch('https://api.todos.in.jt-lab.ch/todos', {
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
 
-  arrOfTask.push(...storedTaskListArr)
+    if (!resp.ok) {
+      throw new Error(`HTTP Error Status: ${resp.status}`)
+    }
+
+    const tasks: Task[] = await resp.json()
+    arrOfTask.push(...tasks)
+    renderTodos()
+  } catch (error) {
+    console.error(error)
+  }
 }
