@@ -1,21 +1,16 @@
 import './style.css'
-import {
-  addTodoToStorage,
-  arrOfTask,
-  initializeFromStorage,
-} from './services/storage'
+import { addTodoToStorage, initializeFromStorage } from './services/storage'
 import { createTaskElement } from './UI/createEl'
 import { deleteAllBtnVisibility, dueDateUrgency } from './UI/updateUi'
 import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
-
 const { addBtn, todoInput, errorTxt, dateInput, tasksList } = elements
 
 const haveDueDate = () => {
   return dateInput.value !== '' ? dateInput.value : 'no due date'
 }
 
-const addTodo = () => {
+const addTodo = async () => {
   const currentDate = getCurrentDate()
   if (
     todoInput.value.trim() === '' &&
@@ -31,14 +26,18 @@ const addTodo = () => {
     errorTxt.textContent = ''
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
-    const id = addTodoToStorage(taskText, taskDueDate)
-    const { newTask, dueDateParagraph } = createTaskElement(
-      taskText,
-      taskDueDate,
-    )
-    tasksList.appendChild(newTask)
-    dueDateUrgency(dueDateParagraph, taskDueDate)
-    todoInput.value = ''
+    const newTask = await addTodoToStorage(taskText, taskDueDate)
+    if (newTask !== null) {
+      const id = newTask.id
+      const { newTask: newTaskEl, dueDateParagraph } = createTaskElement(
+        taskText,
+        taskDueDate,
+        id,
+      )
+      tasksList.appendChild(newTaskEl)
+      dueDateUrgency(dueDateParagraph, taskDueDate)
+      todoInput.value = ''
+    }
   }
   deleteAllBtnVisibility()
 }
