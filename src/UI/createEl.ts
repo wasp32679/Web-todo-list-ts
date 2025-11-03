@@ -60,7 +60,6 @@ export const createTaskElement = (
   const removeBtn = document.createElement('button')
   removeBtn.textContent = 'Remove'
   removeBtn.classList.add('remove', 'border')
-  removeBtn.id = 'removeBtn'
   actionBox.appendChild(removeBtn)
 
   removeBtn.addEventListener('click', () => {
