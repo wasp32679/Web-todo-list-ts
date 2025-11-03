@@ -1,10 +1,9 @@
-import { elements } from '../utils/dom'
-
-const { tasksList, overdueMessageContainer } = elements
-
 import { arrOfTask } from '../services/storage'
 import { getCurrentDate, getFutureDateString } from '../utils/date'
-import { createTaskElement, createDeleteAllBtn } from './createEl'
+import { elements } from '../utils/dom'
+import { createDeleteAllBtn, createTaskElement } from './createEl'
+
+const { tasksList, overdueMessageContainer } = elements
 
 export const updateOverdueMsg = () => {
   const hasOverdueUndoneTasks = arrOfTask.some(

@@ -1,9 +1,10 @@
-import './style.css'
 import { addTodoToStorage, initializeFromStorage } from './services/storage'
 import { createTaskElement } from './UI/createEl'
 import { deleteAllBtnVisibility, dueDateUrgency } from './UI/updateUi'
 import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
+import './style.css'
+
 const { addBtn, todoInput, errorTxt, dateInput, tasksList } = elements
 
 const haveDueDate = () => {
