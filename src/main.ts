@@ -1,9 +1,12 @@
-import { addTodoToStorage, initializeFromStorage } from './services/storage'
+import { addTodoToStorage } from './services/storage'
 import { createTaskElement } from './UI/createEl'
 import { deleteAllBtnVisibility, dueDateUrgency } from './UI/updateUi'
 import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
 import './style.css'
+import { arrOfTask, fetchUrl } from './services/storage'
+import type { Task } from './types/task'
+import { renderTodos } from './UI/updateUi'
 
 const { addBtn, todoInput, errorTxt, dateInput, tasksList } = elements
 
@@ -51,6 +54,26 @@ todoInput.addEventListener('keypress', (e) => {
   }
 })
 
-window.addEventListener('load', () => {
-  initializeFromStorage()
+window.addEventListener('load', async () => {
+  async function initializeFromStorage() {
+    try {
+      const resp = await fetch(fetchUrl, {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      })
+
+      if (!resp.ok) {
+        throw new Error(`HTTP Error Status: ${resp.status}`)
+      }
+
+      const tasks: Task[] = await resp.json()
+      arrOfTask.push(...tasks)
+      renderTodos()
+    } catch (error) {
+      console.error(error)
+      return []
+    }
+  }
+  await initializeFromStorage()
 })

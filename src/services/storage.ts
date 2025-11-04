@@ -4,34 +4,7 @@ export const arrOfTask: Task[] = []
 
 export const arrOfTaskInsert: TaskInsert[] = []
 
-import { renderTodos } from '../UI/updateUi'
-
-const fetchUrl = 'https://api.todos.in.jt-lab.ch/todos'
-
-export async function initializeFromStorage() {
-  try {
-    const resp = await fetch(fetchUrl, {
-      headers: {
-        'Content-type': 'application/json',
-      },
-    })
-
-    if (!resp.ok) {
-      throw new Error(`HTTP Error Status: ${resp.status}`)
-    }
-
-    const tasks: Task[] = await resp.json()
-    arrOfTask.push(...tasks)
-    renderTodos()
-    return tasks.map((t) => ({
-      id: t.id,
-      done: t.done,
-    }))
-  } catch (error) {
-    console.error(error)
-    return []
-  }
-}
+export const fetchUrl = 'https://api.todos.in.jt-lab.ch/todos'
 
 async function updateStorage(id: number, done: boolean) {
   try {
@@ -96,7 +69,6 @@ const findTaskIndexById = (taskId: number) =>
 export async function removeTodoFromStorage(taskId: number) {
   const taskIndex = findTaskIndexById(taskId)
   if (taskIndex !== -1) {
-    arrOfTask.splice(taskIndex, 1)
     try {
       const resp = await fetch(`${fetchUrl}?id=eq.${taskId}`, {
         method: 'DELETE',
@@ -108,6 +80,8 @@ export async function removeTodoFromStorage(taskId: number) {
       if (!resp.ok) {
         throw new Error(`Failed to delete task: ${resp.status}`)
       }
+
+      arrOfTask.splice(taskIndex, 1)
     } catch (error) {
       console.error(error)
     }
@@ -126,17 +100,25 @@ export const saveTodoCheckboxChangesOnStorage = (
 }
 
 export async function clearTodos() {
-  arrOfTask.forEach((task) => {
-    try {
-      fetch(`${fetchUrl}?id=eq.${task.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-type': 'application/json',
-        },
-      })
-    } catch (error) {
-      console.error(error)
-    }
+  const deletePromises = arrOfTask.map((task) => {
+    return fetch(`${fetchUrl}?id=eq.${task.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    }).then((resp) => {
+      if (!resp.ok) {
+        throw new Error(`Failed to delete task ${task.id}: ${resp.status}`)
+      }
+    })
   })
-  arrOfTask.length = 0
+
+  try {
+    await Promise.all(deletePromises)
+    arrOfTask.length = 0
+    return true
+  } catch (error) {
+    console.error('One or more tasks could not be deleted:', error)
+    return false
+  }
 }
