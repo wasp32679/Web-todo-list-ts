@@ -116,7 +116,9 @@ export async function clearTodos() {
   try {
     await Promise.all(deletePromises)
     arrOfTask.length = 0
+    return true
   } catch (error) {
     console.error('One or more tasks could not be deleted:', error)
+    return false
   }
 }

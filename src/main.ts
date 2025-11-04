@@ -70,10 +70,6 @@ window.addEventListener('load', async () => {
       const tasks: Task[] = await resp.json()
       arrOfTask.push(...tasks)
       renderTodos()
-      return tasks.map((t) => ({
-        id: t.id,
-        done: t.done,
-      }))
     } catch (error) {
       console.error(error)
       return []

@@ -85,8 +85,8 @@ export const createDeleteAllBtn = () => {
   clearBtn.classList.add('border')
   clearBtn.id = 'delete-all'
   main.appendChild(clearBtn)
-  clearBtn.addEventListener('click', () => {
-    clearTodos()
+  clearBtn.addEventListener('click', async () => {
+    await clearTodos()
     tasksList.replaceChildren()
     updateUI()
   })
