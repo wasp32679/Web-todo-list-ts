@@ -39,5 +39,3 @@ export const closePopup = () => {
   categoryUpdatePopop.style.display = 'none'
   overlay.style.display = 'none'
 }
-
-const renderUpdatedCategoryUi = async () => {}

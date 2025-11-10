@@ -14,9 +14,9 @@ import { arrOfTask, fetchUrlTodos } from './services/todosStorage'
 import type { Category } from './types/categories'
 import type { Task } from './types/task'
 import {
+  closePopup,
   deleteAllCategoriesBtnVisibility,
   renderCategories,
-  closePopup,
 } from './UI/updateCategoriesUi'
 import {
   deleteAllTodosBtnVisibility,

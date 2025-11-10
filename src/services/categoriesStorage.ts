@@ -11,9 +11,6 @@ export const arrOfCategoriesInsert: CategoryInsert[] = []
 
 export const fetchUrlCategories = 'https://api.todos.in.jt-lab.ch/categories'
 
-const findCategoryIndexById = (categoryId: number) =>
-  arrOfCategories.findIndex((c) => c.id === categoryId)
-
 export async function updateCategoryToStorage(
   categoryId: number,
   categoryName: string,
