@@ -19,7 +19,7 @@ export const createCategoryElement = (
   categoryId: number,
   categoryName: string,
   categoryColor: string,
-): { newCategory: HTMLLIElement; categoryId: number } => {
+): { newCategory: HTMLLIElement } => {
   const newCategory = document.createElement('li')
   newCategory.classList.add('taskAndCategory', 'border')
 
@@ -31,7 +31,6 @@ export const createCategoryElement = (
   categoryContent.textContent = categoryName
 
   const categoryColorIndicator = document.createElement('span')
-  categoryColorIndicator.id = 'color-of-category'
   categoryColorIndicator.className = 'color-of-category'
   categoryColorIndicator.style.backgroundColor = categoryColor
   newCategory.appendChild(categoryColorIndicator)
@@ -61,7 +60,6 @@ export const createCategoryElement = (
 
   return {
     newCategory,
-    categoryId,
   }
 }
 

@@ -1,13 +1,5 @@
-import type {
-  Category,
-  CategoryInsert,
-  CategoryUpdate,
-} from '../types/categories'
+import type { Category, CategoryUpdate } from '../types/categories'
 export const arrOfCategories: Category[] = []
-
-export const arrOfCategoriesUpdate: CategoryUpdate[] = []
-
-export const arrOfCategoriesInsert: CategoryInsert[] = []
 
 export const fetchUrlCategories = 'https://api.todos.in.jt-lab.ch/categories'
 
@@ -36,22 +28,19 @@ export async function updateCategoryToStorage(
     const data: CategoryUpdate[] = await resp.json()
     const updatedCategory = data[0]
 
-    arrOfCategoriesUpdate.push(updatedCategory)
-
+    const categoryIndex = findCategoryIndexById(categoryId)
+    if (categoryIndex !== -1) {
+      arrOfCategories[categoryIndex] = {
+        ...arrOfCategories[categoryIndex],
+        ...updatedCategory,
+      }
+    }
     return updatedCategory
   } catch (error) {
     console.error(error)
     return null
   }
 }
-
-// export const saveUpdatedCategories = (categoryId: number) => {
-//    const categoryIndex = findCategoryIndexById(categoryId)
-//     if (categoryIndex !== -1) {
-//       arrOfTask[taskIndex].done = checkbox.checked
-//     }
-//     updateCategoriesStorage(categoryId)
-// }
 
 export async function addCategoryToStorage(
   categoryName: string,
@@ -86,11 +75,11 @@ export async function addCategoryToStorage(
   }
 }
 
-const findTaskIndexById = (catgoryId: number) =>
-  arrOfCategories.findIndex((c) => c.id === catgoryId)
+const findCategoryIndexById = (categoryId: number) =>
+  arrOfCategories.findIndex((c) => c.id === categoryId)
 
 export async function removeCategoryFromStorage(categoryId: number) {
-  const categoryIndex = findTaskIndexById(categoryId)
+  const categoryIndex = findCategoryIndexById(categoryId)
   if (categoryIndex !== -1) {
     try {
       const resp = await fetch(`${fetchUrlCategories}?id=eq.${categoryId}`, {
@@ -104,7 +93,7 @@ export async function removeCategoryFromStorage(categoryId: number) {
         throw new Error(`Failed to delete task: ${resp.status}`)
       }
 
-      arrOfCategories.splice(categoryId, 1)
+      arrOfCategories.splice(categoryIndex, 1)
     } catch (error) {
       console.error(error)
     }

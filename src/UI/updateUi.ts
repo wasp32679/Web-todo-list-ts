@@ -9,13 +9,11 @@ const {
   overlay,
 } = elements
 
-const loadBtnStyle = 'loadBtnStyle'
-
 const removeLoadClass = () => {
-  if (loadBtnStyle) {
-    categoryInterfaceBtn.classList.remove('loadBtnStyle')
-    todoInterfaceBtn.classList.remove('loadBtnStyle')
-  }
+  categoryInterfaceBtn.classList.remove('loadBtnStyle')
+  todoInterfaceBtn.classList.remove('loadBtnStyle')
+  categoryInterfaceBtn.classList.add('normalInterfaceSize')
+  todoInterfaceBtn.classList.add('normalInterfaceSize')
 }
 
 export const todoVisibility = () => {

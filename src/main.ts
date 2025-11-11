@@ -85,21 +85,24 @@ const addTodo = async () => {
 
 const addCategory = async () => {
   if (categoryNameInput.value.trim() === '') {
+    errorTxt.textContent = 'Can not add empty category.'
+  } else {
+    errorTxt.textContent = ''
+    const categoryColor = categoryColorInput.value
+    const categoryName = categoryNameInput.value.trim()
+    const newCategory = await addCategoryToStorage(categoryName, categoryColor)
+    if (newCategory !== null) {
+      const categoryId = newCategory.id
+      const { newCategory: newCategoryEl } = createCategoryElement(
+        categoryId,
+        categoryName,
+        categoryColor,
+      )
+      categoriesList.appendChild(newCategoryEl)
+      categoryNameInput.value = ''
+    }
+    deleteAllCategoriesBtnVisibility()
   }
-  const categoryColor = categoryColorInput.value
-  const categoryName = categoryNameInput.value.trim()
-  const newCategory = await addCategoryToStorage(categoryName, categoryColor)
-  if (newCategory !== null) {
-    const categoryId = newCategory.id
-    const { newCategory: newCategoryEl } = createCategoryElement(
-      categoryId,
-      categoryName,
-      categoryColor,
-    )
-    categoriesList.appendChild(newCategoryEl)
-    categoryNameInput.value = ''
-  }
-  deleteAllCategoriesBtnVisibility()
 }
 
 addTodoBtn.addEventListener('click', addTodo)
@@ -118,9 +121,15 @@ categoryNameInput.addEventListener('keypress', (e) => {
   }
 })
 
-categoryInterfaceBtn.addEventListener('click', todoVisibility)
+categoryInterfaceBtn.addEventListener('click', () => {
+  todoVisibility()
+  errorTxt.textContent = ''
+})
 
-todoInterfaceBtn.addEventListener('click', categoryVisibility)
+todoInterfaceBtn.addEventListener('click', () => {
+  categoryVisibility()
+  errorTxt.textContent = ''
+})
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
