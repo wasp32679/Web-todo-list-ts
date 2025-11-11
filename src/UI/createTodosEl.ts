@@ -6,8 +6,8 @@ import {
   clearTodos,
   removeTodoFromStorage,
   saveTodoCheckboxChangesOnStorage,
-} from '../services/storage'
-import { updateOverdueMsg, updateUI } from './updateUi'
+} from '../services/todosStorage'
+import { updateOverdueMsg, updateTodoUI } from './updateTodosUi'
 
 export const createTaskElement = (
   taskText: string,
@@ -16,7 +16,7 @@ export const createTaskElement = (
   isDone = false,
 ): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
-  newTask.classList.add('task', 'border')
+  newTask.classList.add('taskAndCategory', 'border')
 
   const taskContent = document.createElement('span')
   taskContent.className = 'tasktxt'
@@ -59,19 +59,19 @@ export const createTaskElement = (
 
   const removeBtn = document.createElement('button')
   removeBtn.textContent = 'Remove'
-  removeBtn.classList.add('remove', 'border')
+  removeBtn.classList.add('remove', 'border', 'smallBtn')
   actionBox.appendChild(removeBtn)
 
-  removeBtn.addEventListener('click', () => {
-    removeTodoFromStorage(taskId)
+  removeBtn.addEventListener('click', async () => {
+    await removeTodoFromStorage(taskId)
     newTask.remove()
-    updateUI()
+    await updateTodoUI()
   })
 
-  checkbox.addEventListener('change', () => {
+  checkbox.addEventListener('change', async () => {
     taskContent.classList.toggle('done', checkbox.checked)
     saveTodoCheckboxChangesOnStorage(taskId, checkbox)
-    updateOverdueMsg()
+    await updateOverdueMsg()
   })
   return {
     newTask,
@@ -79,16 +79,16 @@ export const createTaskElement = (
   }
 }
 
-export const createDeleteAllBtn = () => {
+export const createDeleteAllTodosBtn = () => {
   const clearBtn = document.createElement('button')
   clearBtn.textContent = 'Delete All'
-  clearBtn.classList.add('border')
-  clearBtn.id = 'delete-all'
+  clearBtn.classList.add('border', 'delete-all')
+  clearBtn.id = 'clear-todos'
   main.appendChild(clearBtn)
   clearBtn.addEventListener('click', async () => {
     await clearTodos()
     tasksList.replaceChildren()
-    updateUI()
+    await updateTodoUI()
   })
   return clearBtn
 }

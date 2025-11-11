@@ -9,18 +9,42 @@
 </head>
 
 <body>
+  <div id="edit-category-popup" class="border">
+    <label for="category-name-input-2">Edit category</label>
+    <div id="category-input-box-2">
+      <input type="text" id="category-name-input-2" class="border">
+      <input type="color" id="category-color-input-2" class="border">
+      <button id="update-category-button" class="border">Save</button>
+    </div>
+  </div>
+  <div id="overlay"></div>
   <div id="overdue-message-container" aria-live="polite"></div>
   <h1>Web todolist app</h1>
   <div id="errorText" aria-live="polite"></div>
-  <main class="border">
-    <label for="todo-input">Add a task</label>
-    <div id="inputBox">
-      <input type="text" id="todo-input" class="border">
-      <input type="date" id="todo-date-input" class="border" title="Due date">
-      <button id="add-todo-button" class="border">Add</button>
+  <div id="interfacesBtn">
+    <button id="todo-interface" class="border">Todos</button>
+    <button id="category-interface" class="border">Categories</button>
+  </div>
+  <div id="sections">
+    <main class="border">
+      <label for="todo-input">Add a task</label>
+      <div id="inputBox">
+        <input type="text" id="todo-input" class="border">
+        <input type="date" id="todo-date-input" class="border" title="Due date">
+        <button id="add-todo-button" class="border">Add</button>
+      </div>
+      <ul id="todo-elements"></ul>
+    </main>
+    <div id="category-section" class="border">
+      <label for="category-name-input">Add a category</label>
+      <div id="category-input-box">
+        <input type="text" id="category-name-input" class="border">
+        <input type="color" id="category-color-input" class="border">
+        <button id="add-category-button" class="border">Add</button>
+      </div>
+      <ul id="categories-elements"></ul>
     </div>
-    <ul id="todo-elements"></ul>
-  </main>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

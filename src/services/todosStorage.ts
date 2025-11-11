@@ -4,11 +4,11 @@ export const arrOfTask: Task[] = []
 
 export const arrOfTaskInsert: TaskInsert[] = []
 
-export const fetchUrl = 'https://api.todos.in.jt-lab.ch/todos'
+export const fetchUrlTodos = 'https://api.todos.in.jt-lab.ch/todos'
 
-async function updateStorage(id: number, done: boolean) {
+async function updateTodosStorage(id: number, done: boolean) {
   try {
-    const resp = await fetch(`${fetchUrl}?id=eq.${id}`, {
+    const resp = await fetch(`${fetchUrlTodos}?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json',
@@ -21,8 +21,6 @@ async function updateStorage(id: number, done: boolean) {
     if (!resp.ok) {
       throw new Error(`HTTP Error Status: ${resp.status}`)
     }
-
-    await resp.json()
   } catch (error) {
     console.error(error)
   }
@@ -33,7 +31,7 @@ export async function addTodoToStorage(
   taskDueDate: string,
 ): Promise<Task | null> {
   try {
-    const resp = await fetch(fetchUrl, {
+    const resp = await fetch(fetchUrlTodos, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -42,7 +40,8 @@ export async function addTodoToStorage(
       body: JSON.stringify({
         title: taskText,
         content: taskText,
-        due_date: taskDueDate,
+        due_date:
+          taskDueDate && taskDueDate !== 'no due date' ? taskDueDate : null,
         done: false,
       }),
     })
@@ -70,7 +69,7 @@ export async function removeTodoFromStorage(taskId: number) {
   const taskIndex = findTaskIndexById(taskId)
   if (taskIndex !== -1) {
     try {
-      const resp = await fetch(`${fetchUrl}?id=eq.${taskId}`, {
+      const resp = await fetch(`${fetchUrlTodos}?id=eq.${taskId}`, {
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
@@ -96,12 +95,12 @@ export const saveTodoCheckboxChangesOnStorage = (
   if (taskIndex !== -1) {
     arrOfTask[taskIndex].done = checkbox.checked
   }
-  updateStorage(taskId, checkbox.checked)
+  updateTodosStorage(taskId, checkbox.checked)
 }
 
 export async function clearTodos() {
   const deletePromises = arrOfTask.map((task) => {
-    return fetch(`${fetchUrl}?id=eq.${task.id}`, {
+    return fetch(`${fetchUrlTodos}?id=eq.${task.id}`, {
       method: 'DELETE',
       headers: {
         'Content-type': 'application/json',
