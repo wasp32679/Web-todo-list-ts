@@ -1,9 +1,12 @@
 import type { Category, CategoryUpdate } from '../types/categories'
+import { elements } from '../utils/dom'
+
+const { selectCategoryMenu } = elements
 export const arrOfCategories: Category[] = []
 
 export const fetchUrlCategories = 'https://api.todos.in.jt-lab.ch/categories'
 
-export async function updateCategoryToStorage(
+export async function updateCategoryToApi(
   categoryId: number,
   categoryName: string,
   categoryColor: string,
@@ -34,6 +37,10 @@ export async function updateCategoryToStorage(
         ...arrOfCategories[categoryIndex],
         ...updatedCategory,
       }
+      if (updatedCategory.title) {
+        selectCategoryMenu.children[categoryIndex].textContent =
+          updatedCategory.title
+      }
     }
     return updatedCategory
   } catch (error) {
@@ -42,7 +49,7 @@ export async function updateCategoryToStorage(
   }
 }
 
-export async function addCategoryToStorage(
+export async function addCategoryToApi(
   categoryName: string,
   categoryColor: string,
 ): Promise<Category | null> {
@@ -75,10 +82,10 @@ export async function addCategoryToStorage(
   }
 }
 
-const findCategoryIndexById = (categoryId: number) =>
+export const findCategoryIndexById = (categoryId: number) =>
   arrOfCategories.findIndex((c) => c.id === categoryId)
 
-export async function removeCategoryFromStorage(categoryId: number) {
+export async function removeCategoryFromApi(categoryId: number) {
   const categoryIndex = findCategoryIndexById(categoryId)
   if (categoryIndex !== -1) {
     try {
@@ -90,10 +97,15 @@ export async function removeCategoryFromStorage(categoryId: number) {
       })
 
       if (!resp.ok) {
-        throw new Error(`Failed to delete task: ${resp.status}`)
+        throw new Error(`Failed to delete category: ${resp.status}`)
       }
 
       arrOfCategories.splice(categoryIndex, 1)
+      if (selectCategoryMenu.hasChildNodes()) {
+        selectCategoryMenu.removeChild(
+          selectCategoryMenu.children[categoryIndex],
+        )
+      }
     } catch (error) {
       console.error(error)
     }
@@ -121,5 +133,25 @@ export async function clearCategories() {
   } catch (error) {
     console.error('One or more tasks could not be deleted:', error)
     return false
+  }
+}
+
+export async function getCategoryColor(categoryId: number) {
+  try {
+    const resp = await fetch(`${fetchUrlCategories}?id=eq.${categoryId}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Accept: 'application/vnd.pgrst.object+json',
+      },
+    })
+
+    if (!resp.ok) {
+      throw new Error(`Failed to delete category: ${resp.status}`)
+    }
+    const category: Category = await resp.json()
+    return category.color
+  } catch (error) {
+    console.error(error)
   }
 }

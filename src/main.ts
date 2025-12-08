@@ -1,16 +1,21 @@
-import { addTodoToStorage } from './services/todosStorage'
-import { createCategoryElement } from './UI/createCategoriesEl'
+import { addTodoToApi } from './services/todosApi'
+import {
+  createCategoryElement,
+  createCategoryOption,
+} from './UI/createCategoriesEl'
 import { createTaskElement } from './UI/createTodosEl'
 import { getCurrentDate } from './utils/date'
 import { elements } from './utils/dom'
 import './style.css'
 import {
-  addCategoryToStorage,
+  addCategoryToApi,
   arrOfCategories,
   fetchUrlCategories,
-  updateCategoryToStorage,
-} from './services/categoriesStorage'
-import { arrOfTask, fetchUrlTodos } from './services/todosStorage'
+  getCategoryColor,
+  updateCategoryToApi,
+} from './services/categoriesApi'
+import { addCategoriesTodosApi } from './services/categoriesTodosApi'
+import { arrOfTask, fetchUrlTodos } from './services/todosApi'
 import type { Category } from './types/categories'
 import type { Task } from './types/task'
 import {
@@ -44,10 +49,37 @@ const {
   categoryNameInput2,
   categoryColorInput2,
   saveCategoryUpdateBtn,
+  selectCategoryMenu,
 } = elements
 
 const haveDueDate = () => {
   return dateInput.value !== '' ? dateInput.value : 'no due date'
+}
+
+const getSelected = () => {
+  return selectCategoryMenu.selectedOptions[0]
+}
+
+const haveCategory = () => {
+  const selected = getSelected()
+  if (!selected || selectCategoryMenu.value === '') return 'no category'
+  return selected.textContent ?? 'no category'
+}
+
+const haveCategoryColor = async () => {
+  const categoryId = Number(getSelected().value)
+  if (categoryId !== 0) {
+    const categoryColor = await getCategoryColor(categoryId)
+    if (categoryColor) {
+      return categoryColor
+    }
+  }
+}
+
+const haveCategoryId = (): number | null => {
+  return selectCategoryMenu.value !== ''
+    ? Number(selectCategoryMenu.value)
+    : null
 }
 
 const addTodo = async () => {
@@ -67,14 +99,24 @@ const addTodo = async () => {
     errorTxt.textContent = ''
     const taskText = todoInput.value.trim()
     const taskDueDate = haveDueDate()
-    const newTask = await addTodoToStorage(taskText, taskDueDate)
+    const taskCategory = haveCategory()
+    const taskCategoryId = haveCategoryId()
+    const catColor = await haveCategoryColor()
+    const newTask = await addTodoToApi(taskText, taskDueDate)
     if (newTask !== null) {
       const id = newTask.id
       const { newTask: newTaskEl, dueDateParagraph } = createTaskElement(
         taskText,
         taskDueDate,
         id,
+        taskCategory,
       )
+      if (taskCategoryId !== null) {
+        await addCategoriesTodosApi(id, taskCategoryId)
+        if (catColor) {
+          newTaskEl.style.borderColor = catColor
+        }
+      }
       tasksList.appendChild(newTaskEl)
       dueDateUrgency(dueDateParagraph, taskDueDate)
       todoInput.value = ''
@@ -90,7 +132,7 @@ const addCategory = async () => {
     errorTxt.textContent = ''
     const categoryColor = categoryColorInput.value
     const categoryName = categoryNameInput.value.trim()
-    const newCategory = await addCategoryToStorage(categoryName, categoryColor)
+    const newCategory = await addCategoryToApi(categoryName, categoryColor)
     if (newCategory !== null) {
       const categoryId = newCategory.id
       const { newCategory: newCategoryEl } = createCategoryElement(
@@ -100,6 +142,8 @@ const addCategory = async () => {
       )
       categoriesList.appendChild(newCategoryEl)
       categoryNameInput.value = ''
+      const newOption = createCategoryOption(categoryId, categoryName)
+      selectCategoryMenu.appendChild(newOption)
     }
     deleteAllCategoriesBtnVisibility()
   }
@@ -141,7 +185,7 @@ saveCategoryUpdateBtn.addEventListener('click', async () => {
   const categoryColor = categoryColorInput2.value
   const categoryName = categoryNameInput2.value.trim()
   const categoryId = Number(categoryNameInput2.dataset.categoryId)
-  const updatedCategory = await updateCategoryToStorage(
+  const updatedCategory = await updateCategoryToApi(
     categoryId,
     categoryName,
     categoryColor,
@@ -167,10 +211,10 @@ saveCategoryUpdateBtn.addEventListener('click', async () => {
 })
 
 window.addEventListener('load', async () => {
-  async function initializeFromStorage(
+  async function initializeFromApi(
     url: string,
-    arr: Task[] | Category[],
     renderFunc: () => void,
+    arr?: Task[] | Category[],
   ) {
     try {
       const resp = await fetch(url, {
@@ -185,9 +229,11 @@ window.addEventListener('load', async () => {
 
       if (arr === arrOfTask) {
         const initialized: Task[] = await resp.json()
+        arrOfTask.length = 0
         arrOfTask.push(...initialized)
       } else if (arr === arrOfCategories) {
         const initialized: Category[] = await resp.json()
+        arrOfCategories.length = 0
         arrOfCategories.push(...initialized)
       }
       renderFunc()
@@ -196,12 +242,8 @@ window.addEventListener('load', async () => {
       return []
     }
   }
-  await initializeFromStorage(fetchUrlTodos, arrOfTask, renderTodos)
-  await initializeFromStorage(
-    fetchUrlCategories,
-    arrOfCategories,
-    renderCategories,
-  )
+  await initializeFromApi(fetchUrlTodos, () => renderTodos(), arrOfTask)
+  await initializeFromApi(fetchUrlCategories, renderCategories, arrOfCategories)
 
   loadPageInterface()
 })

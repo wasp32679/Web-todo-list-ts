@@ -42,4 +42,7 @@ export const elements = {
     '#update-category-button',
   ),
   overlay: getRequiredElement<HTMLDivElement>('#overlay'),
+  selectCategoryMenu: getRequiredElement<HTMLSelectElement>(
+    '#select-category-menu',
+  ),
 }

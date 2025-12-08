@@ -1,4 +1,4 @@
-import { arrOfTask } from '../services/todosStorage'
+import { arrOfTask } from '../services/todosApi'
 import { getCurrentDate, getFutureDateString } from '../utils/date'
 import { elements } from '../utils/dom'
 import { createDeleteAllTodosBtn, createTaskElement } from './createTodosEl'
@@ -68,15 +68,22 @@ export const dueDateUrgency = (
 }
 
 export const renderTodos = () => {
+  tasksList.innerHTML = ''
   arrOfTask.forEach((task) => {
     const displayDate = task.due_date ? task.due_date : 'no due date'
+    const categoryColor =
+      task.categories_todos?.[0]?.categories?.color ?? '373737'
+    const taskCategoryName =
+      task.categories_todos?.[0]?.categories?.title ?? 'no category'
 
     const { newTask, dueDateParagraph } = createTaskElement(
       task.content,
       displayDate,
       task.id,
+      taskCategoryName,
       task.done,
     )
+    newTask.style.borderColor = categoryColor
     tasksList.appendChild(newTask)
     if (task.due_date) {
       dueDateUrgency(dueDateParagraph, task.due_date)

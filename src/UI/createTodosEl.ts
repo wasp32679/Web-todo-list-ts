@@ -4,15 +4,16 @@ const { tasksList, main } = elements
 
 import {
   clearTodos,
-  removeTodoFromStorage,
-  saveTodoCheckboxChangesOnStorage,
-} from '../services/todosStorage'
+  removeTodoFromApi,
+  saveTodoCheckboxChangesOnApi,
+} from '../services/todosApi'
 import { updateOverdueMsg, updateTodoUI } from './updateTodosUi'
 
 export const createTaskElement = (
   taskText: string,
   taskDueDate: string,
   taskId: number,
+  taskCategory: string,
   isDone = false,
 ): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
@@ -25,6 +26,11 @@ export const createTaskElement = (
   if (isDone) {
     taskContent.classList.add('done')
   }
+
+  const categoryParagraph = document.createElement('p')
+  categoryParagraph.className = 'taskcategory'
+  categoryParagraph.textContent = taskCategory
+  newTask.appendChild(categoryParagraph)
 
   const dueDateParagraph = document.createElement('p')
   dueDateParagraph.className = 'taskdate'
@@ -63,14 +69,14 @@ export const createTaskElement = (
   actionBox.appendChild(removeBtn)
 
   removeBtn.addEventListener('click', async () => {
-    await removeTodoFromStorage(taskId)
+    await removeTodoFromApi(taskId)
     newTask.remove()
     await updateTodoUI()
   })
 
   checkbox.addEventListener('change', async () => {
     taskContent.classList.toggle('done', checkbox.checked)
-    saveTodoCheckboxChangesOnStorage(taskId, checkbox)
+    saveTodoCheckboxChangesOnApi(taskId, checkbox)
     await updateOverdueMsg()
   })
   return {

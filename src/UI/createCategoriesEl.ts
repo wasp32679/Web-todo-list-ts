@@ -1,7 +1,7 @@
 import {
   clearCategories,
-  removeCategoryFromStorage,
-} from '../services/categoriesStorage'
+  removeCategoryFromApi,
+} from '../services/categoriesApi'
 import { elements } from '../utils/dom'
 import {
   deleteAllCategoriesBtnVisibility,
@@ -53,7 +53,7 @@ export const createCategoryElement = (
   })
 
   removeBtn.addEventListener('click', async () => {
-    await removeCategoryFromStorage(categoryId)
+    await removeCategoryFromApi(categoryId)
     newCategory.remove()
     await deleteAllCategoriesBtnVisibility()
   })
@@ -75,4 +75,14 @@ export const createDeleteAllCategoriesBtn = () => {
     await deleteAllCategoriesBtnVisibility()
   })
   return clearCategoriesBtn
+}
+
+export const createCategoryOption = (
+  categoryId: number,
+  categoryName: string,
+) => {
+  const newOption = document.createElement('option')
+  newOption.value = String(categoryId)
+  newOption.textContent = categoryName
+  return newOption
 }

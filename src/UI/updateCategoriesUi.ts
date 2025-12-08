@@ -1,11 +1,13 @@
-import { arrOfCategories } from '../services/categoriesStorage'
+import { arrOfCategories } from '../services/categoriesApi'
 import { elements } from '../utils/dom'
 import {
   createCategoryElement,
+  createCategoryOption,
   createDeleteAllCategoriesBtn,
 } from './createCategoriesEl'
 
-const { categoriesList, categoryUpdatePopop, overlay } = elements
+const { categoriesList, categoryUpdatePopop, overlay, selectCategoryMenu } =
+  elements
 
 export const deleteAllCategoriesBtnVisibility = () => {
   const clearCategoriesBtn =
@@ -24,6 +26,8 @@ export const renderCategories = () => {
       category.color,
     )
     categoriesList.appendChild(newCategory)
+    const newOption = createCategoryOption(category.id, category.title)
+    selectCategoryMenu.appendChild(newOption)
   })
 
   createDeleteAllCategoriesBtn()
