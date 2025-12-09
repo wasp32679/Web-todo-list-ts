@@ -70,9 +70,7 @@ const haveCategoryColor = async () => {
   const categoryId = Number(getSelected().value)
   if (categoryId !== 0) {
     const categoryColor = await getCategoryColor(categoryId)
-    if (categoryColor) {
-      return categoryColor
-    }
+    return categoryColor
   }
 }
 
@@ -242,7 +240,7 @@ window.addEventListener('load', async () => {
       return []
     }
   }
-  await initializeFromApi(fetchUrlTodos, () => renderTodos(), arrOfTask)
+  await initializeFromApi(fetchUrlTodos, renderTodos, arrOfTask)
   await initializeFromApi(fetchUrlCategories, renderCategories, arrOfCategories)
 
   loadPageInterface()

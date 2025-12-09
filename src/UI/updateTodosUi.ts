@@ -71,8 +71,9 @@ export const renderTodos = () => {
   tasksList.innerHTML = ''
   arrOfTask.forEach((task) => {
     const displayDate = task.due_date ? task.due_date : 'no due date'
+    const noCategoryColor = '373737'
     const categoryColor =
-      task.categories_todos?.[0]?.categories?.color ?? '373737'
+      task.categories_todos?.[0]?.categories?.color ?? noCategoryColor
     const taskCategoryName =
       task.categories_todos?.[0]?.categories?.title ?? 'no category'
 

@@ -38,8 +38,12 @@ export async function updateCategoryToApi(
         ...updatedCategory,
       }
       if (updatedCategory.title) {
-        selectCategoryMenu.children[categoryIndex].textContent =
-          updatedCategory.title
+        const optionToUpdate = selectCategoryMenu.querySelector(
+          `option[value="${categoryId}"]`,
+        )
+        if (optionToUpdate) {
+          optionToUpdate.textContent = updatedCategory.title
+        }
       }
     }
     return updatedCategory
@@ -101,10 +105,11 @@ export async function removeCategoryFromApi(categoryId: number) {
       }
 
       arrOfCategories.splice(categoryIndex, 1)
-      if (selectCategoryMenu.hasChildNodes()) {
-        selectCategoryMenu.removeChild(
-          selectCategoryMenu.children[categoryIndex],
-        )
+      const optionToRemove = selectCategoryMenu.querySelector(
+        `option[value="${categoryId}"]`,
+      )
+      if (optionToRemove) {
+        selectCategoryMenu.removeChild(optionToRemove)
       }
     } catch (error) {
       console.error(error)
@@ -147,7 +152,7 @@ export async function getCategoryColor(categoryId: number) {
     })
 
     if (!resp.ok) {
-      throw new Error(`Failed to delete category: ${resp.status}`)
+      throw new Error(`Failed to fetch category color: ${resp.status}`)
     }
     const category: Category = await resp.json()
     return category.color
