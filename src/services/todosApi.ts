@@ -4,11 +4,14 @@ export const arrOfTask: Task[] = []
 
 export const arrOfTaskInsert: TaskInsert[] = []
 
-export const fetchUrlTodos = 'https://api.todos.in.jt-lab.ch/todos'
+const baseUrlTodos = 'https://api.todos.in.jt-lab.ch/todos'
 
-async function updateTodosStorage(id: number, done: boolean) {
+export const fetchUrlTodos =
+  'https://api.todos.in.jt-lab.ch/todos?select=*,categories_todos(categories(title,color))'
+
+async function updateTodosApi(id: number, done: boolean) {
   try {
-    const resp = await fetch(`${fetchUrlTodos}?id=eq.${id}`, {
+    const resp = await fetch(`${baseUrlTodos}?id=eq.${id}`, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json',
@@ -26,7 +29,7 @@ async function updateTodosStorage(id: number, done: boolean) {
   }
 }
 
-export async function addTodoToStorage(
+export async function addTodoToApi(
   taskText: string,
   taskDueDate: string,
 ): Promise<Task | null> {
@@ -62,14 +65,14 @@ export async function addTodoToStorage(
   }
 }
 
-const findTaskIndexById = (taskId: number) =>
+export const findTaskIndexById = (taskId: number) =>
   arrOfTask.findIndex((t) => t.id === taskId)
 
-export async function removeTodoFromStorage(taskId: number) {
+export async function removeTodoFromApi(taskId: number) {
   const taskIndex = findTaskIndexById(taskId)
   if (taskIndex !== -1) {
     try {
-      const resp = await fetch(`${fetchUrlTodos}?id=eq.${taskId}`, {
+      const resp = await fetch(`${baseUrlTodos}?id=eq.${taskId}`, {
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json',
@@ -87,7 +90,7 @@ export async function removeTodoFromStorage(taskId: number) {
   }
 }
 
-export const saveTodoCheckboxChangesOnStorage = (
+export const saveTodoCheckboxChangesOnApi = (
   taskId: number,
   checkbox: HTMLInputElement,
 ) => {
@@ -95,7 +98,7 @@ export const saveTodoCheckboxChangesOnStorage = (
   if (taskIndex !== -1) {
     arrOfTask[taskIndex].done = checkbox.checked
   }
-  updateTodosStorage(taskId, checkbox.checked)
+  updateTodosApi(taskId, checkbox.checked)
 }
 
 export async function clearTodos() {
