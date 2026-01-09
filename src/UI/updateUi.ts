@@ -7,6 +7,7 @@ const {
   todoInterfaceBtn,
   categoryUpdatePopop,
   overlay,
+  todoUpdatePopop,
 } = elements
 
 const removeLoadClass = () => {
@@ -32,6 +33,7 @@ export const loadPageInterface = () => {
   main.style.display = 'none'
   categorySection.style.display = 'none'
   categoryUpdatePopop.style.display = 'none'
+  todoUpdatePopop.style.display = 'none'
   overlay.style.display = 'none'
   categoryInterfaceBtn.classList.add('loadBtnStyle')
   todoInterfaceBtn.classList.add('loadBtnStyle')

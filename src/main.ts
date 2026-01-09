@@ -19,11 +19,12 @@ import { arrOfTask, fetchUrlTodos } from './services/todosApi'
 import type { Category } from './types/categories'
 import type { Task } from './types/task'
 import {
-  closePopup,
+  closeCategoryPopup,
   deleteAllCategoriesBtnVisibility,
   renderCategories,
 } from './UI/updateCategoriesUi'
 import {
+  closeTodoPopup,
   deleteAllTodosBtnVisibility,
   dueDateUrgency,
   renderTodos,
@@ -175,7 +176,8 @@ todoInterfaceBtn.addEventListener('click', () => {
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    closePopup()
+    closeCategoryPopup()
+    closeTodoPopup()
   }
 })
 
@@ -205,7 +207,7 @@ saveCategoryUpdateBtn.addEventListener('click', async () => {
       }
     }
   }
-  closePopup()
+  closeCategoryPopup()
 })
 
 window.addEventListener('load', async () => {

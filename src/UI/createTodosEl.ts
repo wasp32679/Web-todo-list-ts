@@ -7,7 +7,7 @@ import {
   removeTodoFromApi,
   saveTodoCheckboxChangesOnApi,
 } from '../services/todosApi'
-import { updateOverdueMsg, updateTodoUI } from './updateTodosUi'
+import { updateOverdueMsg, updateTodoUI, showTodoPopup } from './updateTodosUi'
 
 export const createTaskElement = (
   taskText: string,
@@ -63,10 +63,19 @@ export const createTaskElement = (
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
+  const editBtn = document.createElement('button')
+  editBtn.textContent = 'Edit'
+  editBtn.classList.add('edit', 'border', 'smallBtn')
+  actionBox.appendChild(editBtn)
+
   const removeBtn = document.createElement('button')
   removeBtn.textContent = 'Remove'
   removeBtn.classList.add('remove', 'border', 'smallBtn')
   actionBox.appendChild(removeBtn)
+
+  editBtn.addEventListener('click', async () => {
+    showTodoPopup()
+  })
 
   removeBtn.addEventListener('click', async () => {
     await removeTodoFromApi(taskId)

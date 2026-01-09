@@ -34,12 +34,12 @@ export const renderCategories = () => {
   deleteAllCategoriesBtnVisibility()
 }
 
-export const showPopup = () => {
+export const showCategoryPopup = () => {
   categoryUpdatePopop.style.display = 'inline-flex'
   overlay.style.display = 'inline-flex'
 }
 
-export const closePopup = () => {
+export const closeCategoryPopup = () => {
   categoryUpdatePopop.style.display = 'none'
   overlay.style.display = 'none'
 }

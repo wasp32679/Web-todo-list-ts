@@ -101,6 +101,7 @@ label {
 }
 
 #inputBox,
+#todo-input-box,
 #category-input-box,
 #category-input-box-2 {
   margin: 10px 20px 20px 20px;
@@ -110,6 +111,7 @@ label {
 }
 
 #todo-input,
+#todo-name-input,
 #category-name-input,
 #category-name-input-2 {
   background: none;
@@ -121,7 +123,8 @@ label {
 
 #add-todo-button,
 #add-category-button,
-#update-category-button {
+#update-category-button,
+#update-todo-button {
   width: 5rem;
   background-color: var(--color-accent);
 }
@@ -191,6 +194,7 @@ input[type="checkbox"] {
 }
 
 #todo-date-input,
+#todo-date-input-2,
 #category-color-input,
 #category-color-input-2 {
   width: 10rem;
@@ -235,7 +239,8 @@ input[type="checkbox"] {
   background-color: var(--color-gray);
 }
 
-#edit-category-popup {
+#edit-category-popup,
+#edit-todo-popup {
   background-color: var(--color-background);
   margin-top: 30vh;
   height: 20vh;
