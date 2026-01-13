@@ -45,4 +45,13 @@ export const elements = {
   selectCategoryMenu: getRequiredElement<HTMLSelectElement>(
     '#select-category-menu',
   ),
+  todoUpdatePopop: getRequiredElement<HTMLDivElement>('#edit-todo-popup'),
+  todoNameInput: getRequiredElement<HTMLInputElement>('#todo-name-input'),
+  dateInput2: getRequiredElement<HTMLInputElement>('#todo-date-input-2'),
+  saveTodoUpdateBtn: getRequiredElement<HTMLButtonElement>(
+    '#update-todo-button',
+  ),
+  selectCategoryMenu2: getRequiredElement<HTMLSelectElement>(
+    '#select-category-menu-2',
+  ),
 }

@@ -3,7 +3,8 @@ import { getCurrentDate, getFutureDateString } from '../utils/date'
 import { elements } from '../utils/dom'
 import { createDeleteAllTodosBtn, createTaskElement } from './createTodosEl'
 
-const { tasksList, overdueMessageContainer } = elements
+const { tasksList, overdueMessageContainer, overlay, todoUpdatePopop } =
+  elements
 
 export const updateOverdueMsg = async () => {
   const hasOverdueUndoneTasks = arrOfTask.some(
@@ -91,6 +92,19 @@ export const renderTodos = () => {
     }
   })
 
-  createDeleteAllTodosBtn()
+  const clearBtn = document.getElementById('clear-todos')
+  if (!clearBtn) {
+    createDeleteAllTodosBtn()
+  }
   updateTodoUI()
+}
+
+export const showTodoPopup = () => {
+  todoUpdatePopop.style.display = 'inline-flex'
+  overlay.style.display = 'inline-flex'
+}
+
+export const closeTodoPopup = () => {
+  todoUpdatePopop.style.display = 'none'
+  overlay.style.display = 'none'
 }

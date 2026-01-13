@@ -6,8 +6,13 @@ import {
   createDeleteAllCategoriesBtn,
 } from './createCategoriesEl'
 
-const { categoriesList, categoryUpdatePopop, overlay, selectCategoryMenu } =
-  elements
+const {
+  categoriesList,
+  categoryUpdatePopop,
+  overlay,
+  selectCategoryMenu,
+  selectCategoryMenu2,
+} = elements
 
 export const deleteAllCategoriesBtnVisibility = () => {
   const clearCategoriesBtn =
@@ -28,18 +33,20 @@ export const renderCategories = () => {
     categoriesList.appendChild(newCategory)
     const newOption = createCategoryOption(category.id, category.title)
     selectCategoryMenu.appendChild(newOption)
+    const newOption2 = newOption.cloneNode(true) as HTMLOptionElement
+    selectCategoryMenu2.appendChild(newOption2)
   })
 
   createDeleteAllCategoriesBtn()
   deleteAllCategoriesBtnVisibility()
 }
 
-export const showPopup = () => {
+export const showCategoryPopup = () => {
   categoryUpdatePopop.style.display = 'inline-flex'
   overlay.style.display = 'inline-flex'
 }
 
-export const closePopup = () => {
+export const closeCategoryPopup = () => {
   categoryUpdatePopop.style.display = 'none'
   overlay.style.display = 'none'
 }

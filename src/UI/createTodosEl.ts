@@ -1,13 +1,15 @@
 import { elements } from '../utils/dom'
 
-const { tasksList, main } = elements
+const { tasksList, main, todoNameInput, dateInput2, selectCategoryMenu2 } =
+  elements
 
 import {
+  arrOfTask,
   clearTodos,
   removeTodoFromApi,
   saveTodoCheckboxChangesOnApi,
 } from '../services/todosApi'
-import { updateOverdueMsg, updateTodoUI } from './updateTodosUi'
+import { showTodoPopup, updateOverdueMsg, updateTodoUI } from './updateTodosUi'
 
 export const createTaskElement = (
   taskText: string,
@@ -18,6 +20,8 @@ export const createTaskElement = (
 ): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
   newTask.classList.add('taskAndCategory', 'border')
+
+  newTask.dataset.taskId = String(taskId)
 
   const taskContent = document.createElement('span')
   taskContent.className = 'tasktxt'
@@ -63,10 +67,29 @@ export const createTaskElement = (
   actionBox.appendChild(checkLabel)
   actionBox.appendChild(checkbox)
 
+  const editBtn = document.createElement('button')
+  editBtn.textContent = 'Edit'
+  editBtn.classList.add('edit', 'border', 'smallBtn')
+  actionBox.appendChild(editBtn)
+
   const removeBtn = document.createElement('button')
   removeBtn.textContent = 'Remove'
   removeBtn.classList.add('remove', 'border', 'smallBtn')
   actionBox.appendChild(removeBtn)
+
+  editBtn.addEventListener('click', async () => {
+    showTodoPopup()
+    todoNameInput.value = taskText
+    dateInput2.value = taskDueDate
+    const task = arrOfTask.find((t) => t.id === taskId)
+
+    const currentCategoryId = task?.categories_todos?.[0]?.category_id ?? null
+
+    selectCategoryMenu2.value = currentCategoryId
+      ? String(currentCategoryId)
+      : ''
+    todoNameInput.dataset.taskId = String(taskId)
+  })
 
   removeBtn.addEventListener('click', async () => {
     await removeTodoFromApi(taskId)

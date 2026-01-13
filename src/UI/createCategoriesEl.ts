@@ -5,7 +5,7 @@ import {
 import { elements } from '../utils/dom'
 import {
   deleteAllCategoriesBtnVisibility,
-  showPopup,
+  showCategoryPopup,
 } from './updateCategoriesUi'
 
 const {
@@ -46,7 +46,7 @@ export const createCategoryElement = (
   newCategory.appendChild(removeBtn)
 
   editBtn.addEventListener('click', async () => {
-    showPopup()
+    showCategoryPopup()
     categoryNameInput2.value = categoryName
     categoryColorInput2.value = categoryColor
     categoryNameInput2.dataset.categoryId = String(categoryId)
