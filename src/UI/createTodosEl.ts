@@ -4,11 +4,12 @@ const { tasksList, main, todoNameInput, dateInput2, selectCategoryMenu2 } =
   elements
 
 import {
+  arrOfTask,
   clearTodos,
   removeTodoFromApi,
   saveTodoCheckboxChangesOnApi,
 } from '../services/todosApi'
-import { updateOverdueMsg, updateTodoUI, showTodoPopup } from './updateTodosUi'
+import { showTodoPopup, updateOverdueMsg, updateTodoUI } from './updateTodosUi'
 
 export const createTaskElement = (
   taskText: string,
@@ -80,7 +81,13 @@ export const createTaskElement = (
     showTodoPopup()
     todoNameInput.value = taskText
     dateInput2.value = taskDueDate
-    selectCategoryMenu2.value = ''
+    const task = arrOfTask.find((t) => t.id === taskId)
+
+    const currentCategoryId = task?.categories_todos?.[0]?.category_id ?? null
+
+    selectCategoryMenu2.value = currentCategoryId
+      ? String(currentCategoryId)
+      : ''
     todoNameInput.dataset.taskId = String(taskId)
   })
 

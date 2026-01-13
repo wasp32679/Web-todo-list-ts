@@ -1,5 +1,8 @@
 import type { Task, TaskInsert } from '../types/task'
-import { updateCategoryForTodoApi } from './categoriesTodosApi'
+import {
+  removeCategoryFromTodoApi,
+  updateCategoryForTodoApi,
+} from './categoriesTodosApi'
 
 export const arrOfTask: Task[] = []
 
@@ -8,7 +11,7 @@ export const arrOfTaskInsert: TaskInsert[] = []
 const baseUrlTodos = 'https://api.todos.in.jt-lab.ch/todos'
 
 export const fetchUrlTodos =
-  'https://api.todos.in.jt-lab.ch/todos?select=*,categories_todos(categories(title,color))'
+  'https://api.todos.in.jt-lab.ch/todos?select=*,categories_todos(category_id,categories(title,color))'
 
 async function updateTodoCheckboxApi(id: number, done: boolean) {
   try {
@@ -60,6 +63,8 @@ export async function updateTodoApi(
 
     if (todoCategory) {
       await updateCategoryForTodoApi(taskId, Number(todoCategory))
+    } else {
+      await removeCategoryFromTodoApi(taskId)
     }
 
     const fetchResp = await fetch(`${fetchUrlTodos}&id=eq.${taskId}`, {

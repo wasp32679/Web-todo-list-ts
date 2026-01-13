@@ -20,17 +20,3 @@ export interface TaskInsert {
   due_date: string
   done: boolean
 }
-
-export interface TaskUpdate {
-  id: number
-  title?: string
-  due_date?: string
-
-  categories_todos?: {
-    category_id: number
-    categories: {
-      title: string
-      color: string
-    }
-  }[]
-}

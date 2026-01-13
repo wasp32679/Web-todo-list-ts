@@ -64,6 +64,18 @@ export async function updateCategoryForTodoApi(
       })
     }
   } catch (error) {
-    console.error('Erreur update category', error)
+    console.error('Error updating category for todo', error)
+  }
+}
+
+export async function removeCategoryFromTodoApi(taskId: number) {
+  try {
+    const fetchUrlCategoriesTodos =
+      'https://api.todos.in.jt-lab.ch/categories_todos'
+    await fetch(`${fetchUrlCategoriesTodos}?todo_id=eq.${taskId}`, {
+      method: 'DELETE',
+    })
+  } catch (error) {
+    console.error('Error removing category from todo', error)
   }
 }

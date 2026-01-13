@@ -33,7 +33,7 @@ export const renderCategories = () => {
     categoriesList.appendChild(newCategory)
     const newOption = createCategoryOption(category.id, category.title)
     selectCategoryMenu.appendChild(newOption)
-    const newOption2 = createCategoryOption(category.id, category.title)
+    const newOption2 = newOption.cloneNode(true) as HTMLOptionElement
     selectCategoryMenu2.appendChild(newOption2)
   })
 

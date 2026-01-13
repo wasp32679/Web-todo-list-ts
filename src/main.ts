@@ -87,16 +87,14 @@ const haveCategoryId = (): number | null => {
 
 const addTodo = async () => {
   const currentDate = getCurrentDate()
+  const todoInputTrimmed = todoInput.value.trim()
+  const isPastDate = dateInput.value !== '' && dateInput.value < currentDate
 
-  if (
-    todoInput.value.trim() === '' &&
-    dateInput.value !== '' &&
-    dateInput.value < currentDate
-  ) {
+  if (todoInputTrimmed === '' && isPastDate) {
     errorTxt.textContent = 'Can not add empty task with a past date.'
-  } else if (todoInput.value.trim() === '') {
+  } else if (todoInputTrimmed === '') {
     errorTxt.textContent = 'Can not add empty task.'
-  } else if (dateInput.value !== '' && dateInput.value < currentDate) {
+  } else if (isPastDate) {
     errorTxt.textContent = 'Can not add task with a past date.'
   } else {
     errorTxt.textContent = ''
@@ -113,6 +111,7 @@ const addTodo = async () => {
         taskDueDate,
         id,
         taskCategory,
+        false,
       )
       if (taskCategoryId !== null) {
         await addCategoriesTodosApi(id, taskCategoryId)
@@ -227,28 +226,31 @@ saveTodoUpdateBtn.addEventListener('click', async () => {
   const todoDueDate = dateInput2.value
   const todoCategory = selectCategoryMenu2.value
   const id = Number(todoNameInput.dataset.taskId)
-  if (
-    todoNameInput.value.trim() === '' &&
-    dateInput2.value !== '' &&
-    dateInput2.value < getCurrentDate()
-  ) {
+
+  const todoNameTrimmed = todoNameInput.value.trim()
+  const isPastDate =
+    dateInput2.value !== '' && dateInput2.value < getCurrentDate()
+
+  if (todoNameTrimmed === '' && isPastDate) {
     errorTxt.textContent = 'Can not edit empty task with a past date.'
-  } else if (todoNameInput.value.trim() === '') {
+  } else if (todoNameTrimmed === '') {
     errorTxt.textContent = 'Can not edit empty task.'
-  } else if (dateInput2.value !== '' && dateInput2.value < getCurrentDate()) {
+  } else if (isPastDate) {
     errorTxt.textContent = 'Can not edit task with a past date.'
   } else {
-    errorTxt.textContent = ''
-    const updatedTodo = await updateTodoApi(
-      id,
-      todoName,
-      todoDueDate,
-      todoCategory,
-    )
-    if (updatedTodo) {
-      renderTodos()
+    {
+      errorTxt.textContent = ''
+      const updatedTodo = await updateTodoApi(
+        id,
+        todoName,
+        todoDueDate,
+        todoCategory,
+      )
+      if (updatedTodo) {
+        renderTodos()
+      }
+      closeTodoPopup()
     }
-    closeTodoPopup()
   }
 })
 
