@@ -204,6 +204,16 @@ input[type="checkbox"] {
   color: var(--color-text);
 }
 
+select {
+  background: none;
+  outline: none;
+  color: var(--color-text);
+}
+
+select option {
+  background-color: var(--color-background);
+}
+
 .taskdate,
 .taskcategory {
   margin: 0;

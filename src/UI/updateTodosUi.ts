@@ -92,7 +92,10 @@ export const renderTodos = () => {
     }
   })
 
-  createDeleteAllTodosBtn()
+  const clearBtn = document.getElementById('clear-todos')
+  if (!clearBtn) {
+    createDeleteAllTodosBtn()
+  }
   updateTodoUI()
 }
 

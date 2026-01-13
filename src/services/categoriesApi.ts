@@ -1,7 +1,7 @@
 import type { Category, CategoryUpdate } from '../types/categories'
 import { elements } from '../utils/dom'
 
-const { selectCategoryMenu } = elements
+const { selectCategoryMenu, selectCategoryMenu2 } = elements
 export const arrOfCategories: Category[] = []
 
 export const fetchUrlCategories = 'https://api.todos.in.jt-lab.ch/categories'
@@ -111,6 +111,12 @@ export async function removeCategoryFromApi(categoryId: number) {
       if (optionToRemove) {
         selectCategoryMenu.removeChild(optionToRemove)
       }
+      const optionToRemove2 = selectCategoryMenu2.querySelector(
+        `option[value="${categoryId}"]`,
+      )
+      if (optionToRemove2) {
+        selectCategoryMenu2.removeChild(optionToRemove2)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -134,6 +140,8 @@ export async function clearCategories() {
   try {
     await Promise.all(deletePromises)
     arrOfCategories.length = 0
+    selectCategoryMenu.options.length = 1
+    selectCategoryMenu2.options.length = 1
     return true
   } catch (error) {
     console.error('One or more tasks could not be deleted:', error)

@@ -1,6 +1,7 @@
 import { elements } from '../utils/dom'
 
-const { tasksList, main } = elements
+const { tasksList, main, todoNameInput, dateInput2, selectCategoryMenu2 } =
+  elements
 
 import {
   clearTodos,
@@ -18,6 +19,8 @@ export const createTaskElement = (
 ): { newTask: HTMLLIElement; dueDateParagraph: HTMLParagraphElement } => {
   const newTask = document.createElement('li')
   newTask.classList.add('taskAndCategory', 'border')
+
+  newTask.dataset.taskId = String(taskId)
 
   const taskContent = document.createElement('span')
   taskContent.className = 'tasktxt'
@@ -75,6 +78,10 @@ export const createTaskElement = (
 
   editBtn.addEventListener('click', async () => {
     showTodoPopup()
+    todoNameInput.value = taskText
+    dateInput2.value = taskDueDate
+    selectCategoryMenu2.value = ''
+    todoNameInput.dataset.taskId = String(taskId)
   })
 
   removeBtn.addEventListener('click', async () => {

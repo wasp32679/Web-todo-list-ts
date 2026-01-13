@@ -1,4 +1,5 @@
 import type { Task, TaskInsert } from '../types/task'
+import { updateCategoryForTodoApi } from './categoriesTodosApi'
 
 export const arrOfTask: Task[] = []
 
@@ -9,7 +10,7 @@ const baseUrlTodos = 'https://api.todos.in.jt-lab.ch/todos'
 export const fetchUrlTodos =
   'https://api.todos.in.jt-lab.ch/todos?select=*,categories_todos(categories(title,color))'
 
-async function updateTodosApi(id: number, done: boolean) {
+async function updateTodoCheckboxApi(id: number, done: boolean) {
   try {
     const resp = await fetch(`${baseUrlTodos}?id=eq.${id}`, {
       method: 'PATCH',
@@ -26,6 +27,63 @@ async function updateTodosApi(id: number, done: boolean) {
     }
   } catch (error) {
     console.error(error)
+  }
+}
+
+export async function updateTodoApi(
+  taskId: number,
+  todoName: string,
+  todoDueDate: string,
+  todoCategory: string,
+) {
+  try {
+    let dateForDb: string | null = todoDueDate
+    if (todoDueDate === '') {
+      dateForDb = null
+    }
+    const resp = await fetch(`${baseUrlTodos}?id=eq.${taskId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-type': 'application/json',
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({
+        title: todoName,
+        content: todoName,
+        due_date: dateForDb,
+      }),
+    })
+
+    if (!resp.ok) {
+      throw new Error(`HTTP Error Status: ${resp.status}`)
+    }
+
+    if (todoCategory) {
+      await updateCategoryForTodoApi(taskId, Number(todoCategory))
+    }
+
+    const fetchResp = await fetch(`${fetchUrlTodos}&id=eq.${taskId}`, {
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+
+    if (!fetchResp.ok) {
+      throw new Error(`HTTP Error Status: ${fetchResp.status}`)
+    }
+
+    const data: Task[] = await fetchResp.json()
+    const updatedTodo = data[0]
+
+    const todoIndex = findTaskIndexById(taskId)
+    if (todoIndex !== -1) {
+      arrOfTask[todoIndex] = updatedTodo
+    }
+
+    return updatedTodo
+  } catch (error) {
+    console.error(error)
+    return null
   }
 }
 
@@ -98,7 +156,7 @@ export const saveTodoCheckboxChangesOnApi = (
   if (taskIndex !== -1) {
     arrOfTask[taskIndex].done = checkbox.checked
   }
-  updateTodosApi(taskId, checkbox.checked)
+  updateTodoCheckboxApi(taskId, checkbox.checked)
 }
 
 export async function clearTodos() {

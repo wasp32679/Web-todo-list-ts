@@ -31,3 +31,39 @@ export async function addCategoriesTodosApi(
     return null
   }
 }
+
+export async function updateCategoryForTodoApi(
+  taskId: number,
+  newCategoryId: number,
+) {
+  try {
+    const resp = await fetch(
+      `${fetchUrlCategoriesTodos}?todo_id=eq.${taskId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          category_id: newCategoryId,
+        }),
+      },
+    )
+
+    const data = await resp.json()
+
+    if (data.length === 0) {
+      await fetch(fetchUrlCategoriesTodos, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          todo_id: taskId,
+          category_id: newCategoryId,
+        }),
+      })
+    }
+  } catch (error) {
+    console.error('Erreur update category', error)
+  }
+}

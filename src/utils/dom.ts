@@ -51,4 +51,7 @@ export const elements = {
   saveTodoUpdateBtn: getRequiredElement<HTMLButtonElement>(
     '#update-todo-button',
   ),
+  selectCategoryMenu2: getRequiredElement<HTMLSelectElement>(
+    '#select-category-menu-2',
+  ),
 }
